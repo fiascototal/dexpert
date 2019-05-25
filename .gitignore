@@ -50,4 +50,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-.vscode
+
+# editors specifs cache folders
+.vscode/
