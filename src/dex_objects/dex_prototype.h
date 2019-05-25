@@ -26,5 +26,6 @@ struct s_proto_id_item
     // should be no reference to the type void in the list. 
     uint32_t parameters_off;
 };
+typedef struct s_proto_id_item proto_id_item;
 
 #endif/*!__DEX_PROTOTYPE_H__*/
