@@ -60,20 +60,8 @@ int list_delete(struct s_list *list, struct s_list_item *item)
     if (list->size == 0)
         return (ERR_ITEM_NOT_FOUND);
 
-    if (list->size == 1)
-    {
-        if (list->head != item)
-            return (ERR_ITEM_NOT_FOUND);
-        list->size = 0;
-        list->head = NULL;
-        list->tail = NULL;
-        if (item->data)
-            free(item->data);
-        free(item);
-    }
-
     current = list->head;
-    while (current->next != NULL)
+    while (current != NULL)
     {
         if (current == item)
         {
@@ -153,7 +141,7 @@ int list_iterate(struct s_list *list, f_list_iterator fct, void *priv_data)
     {
         if (fct(current, i, priv_data) != 0)
             break;
-            
+
         i += 1;
         current = current->next;
     }
