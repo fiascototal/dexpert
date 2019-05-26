@@ -139,3 +139,24 @@ int list_destroy(struct s_list *list)
 
     return (ERR_SUCCESS);
 }
+
+int list_iterate(struct s_list *list, f_list_iterator fct, void *priv_data)
+{
+    struct s_list_item *current = NULL;
+    uint32_t i = 0;
+
+    if (list == NULL || fct == NULL)
+        return (ERR_INVALID_ARG);
+
+    current = list->head;
+    while (current != NULL)
+    {
+        if (fct(current, i, priv_data) != 0)
+            break;
+            
+        i += 1;
+        current = current->next;
+    }
+
+    return (ERR_SUCCESS);
+}
