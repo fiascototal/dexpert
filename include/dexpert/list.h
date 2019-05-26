@@ -37,7 +37,7 @@ int list_insert(struct s_list *list, void *data);
 int list_delete(struct s_list *list, struct s_list_item *item);
 
 // destroy the whole list
-void list_destroy(struct s_list *list);
+int list_destroy(struct s_list *list);
 
 // loop on all items of the givne list. Use the fct pointer to do some stuffs on each items
 int list_iterate(struct s_list *list, f_list_iterator fct, void *priv_data);

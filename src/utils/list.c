@@ -87,7 +87,12 @@ int list_delete(struct s_list *list, struct s_list_item *item)
                 list->tail = current->pred;
              
             if (item->data)
+            {
                 free(item->data);
+                item->data = NULL;
+            }
+            item->next = NULL;
+            item->pred = NULL;
             free(item);
 
             list->size -= 1;
@@ -98,4 +103,39 @@ int list_delete(struct s_list *list, struct s_list_item *item)
     }
 
     return (ERR_ITEM_NOT_FOUND);
+}
+
+int list_destroy(struct s_list *list)
+{
+    struct s_list_item *current = NULL,
+                       *tmp = NULL;
+
+    if (list == NULL)
+        return (ERR_INVALID_ARG);
+
+    if (list->size > 0)
+    {
+        current = list->head;
+        while (current->next != NULL)
+        {
+            tmp = current;
+            current = current->next;
+
+            if (tmp->data)
+            {
+                free(tmp->data);
+                tmp->data = NULL;
+            }
+            tmp->next = NULL;
+            tmp->pred = NULL;
+            free(tmp);
+        }
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    free(list);
+
+    return (ERR_SUCCESS);
 }
