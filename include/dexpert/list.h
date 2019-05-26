@@ -3,19 +3,19 @@
 
 # include <stdint.h>
 
-struct s_list
-{
-    struct s_list *head;
-    struct s_list *tail;
-    uint32_t       size;
-};
-
 struct s_list_item
 {
     struct s_list_item *next;
     struct s_list_item *pred;
     void               *data;
 };
+
+struct s_list
+{
+    struct s_list_item *head;
+    struct s_list_item *tail;
+    uint32_t            size;
+}; 
 
 // the function pointer used to iterate over a given list (see below)
 // if this function return:
