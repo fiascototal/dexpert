@@ -31,7 +31,7 @@ typedef int (*f_list_iterator)(
 struct s_list *list_new();
 
 // add a new item in the list
-int list_add(struct s_list *list, void *data);
+int list_insert(struct s_list *list, void *data);
 
 // remove the given item from the list
 int list_del(struct s_list *list, struct s_list_item *item);

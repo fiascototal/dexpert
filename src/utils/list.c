@@ -18,7 +18,7 @@ struct s_list *list_new()
     return (result);
 }
 
-int list_add(struct s_list *list, void *data)
+int list_insert(struct s_list *list, void *data)
 {
     struct s_list_item *item = NULL;
 
