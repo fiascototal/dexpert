@@ -34,7 +34,7 @@ struct s_list *list_new();
 int list_insert(struct s_list *list, void *data);
 
 // remove the given item from the list
-int list_del(struct s_list *list, struct s_list_item *item);
+int list_delete(struct s_list *list, struct s_list_item *item);
 
 // destroy the whole list
 void list_destroy(struct s_list *list);

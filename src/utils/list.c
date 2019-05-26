@@ -49,3 +49,53 @@ int list_insert(struct s_list *list, void *data)
 
     return (ERR_SUCCESS);
 }
+
+int list_delete(struct s_list *list, struct s_list_item *item)
+{
+    struct s_list_item *current = NULL;
+
+    if (list == NULL || item == NULL)
+        return (ERR_INVALID_ARG);
+
+    if (list->size == 0)
+        return (ERR_ITEM_NOT_FOUND);
+
+    if (list->size == 1)
+    {
+        if (list->head != item)
+            return (ERR_ITEM_NOT_FOUND);
+        list->size = 0;
+        list->head = NULL;
+        list->tail = NULL;
+        if (item->data)
+            free(item->data);
+        free(item);
+    }
+
+    current = list->head;
+    while (current->next != NULL)
+    {
+        if (current == item)
+        {
+            if (current->pred != NULL)
+                current->pred->next = current->next;
+            if (current->next != NULL)
+                current->next->pred = current->next;
+            if (current == list->head)
+                list->head = current->next;
+            if (current == list->tail)
+                list->tail = current->pred;
+             
+            if (item->data)
+                free(item->data);
+            free(item);
+
+            list->size -= 1;
+            return (ERR_SUCCESS);
+        }
+
+        current = current->next;
+    }
+
+    return (ERR_ITEM_NOT_FOUND);
+}
