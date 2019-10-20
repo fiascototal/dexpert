@@ -1,6 +1,6 @@
 CC=clang
 INCLUDES=-I../include
-CFLAGS=-W -Wall -ansi -pedantic $(INCLUDES)
+CFLAGS=-W -Wall -ansi -pedantic -std=c11 -fPIC $(INCLUDES)
 LDFLAGS=-pie
 LIB_NAME=../src/dexpert.a
 

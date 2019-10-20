@@ -1,6 +1,6 @@
 CC=clang
 INCLUDES=-I../include -I.
-CFLAGS=-W -Wall -ansi -pedantic $(INCLUDES)
+CFLAGS=-W -Wall -ansi -pedantic -std=c11 -fPIC $(INCLUDES)
 LDFLAGS=
 LIB_NAME=dexpert.a
 LIB_SRC_FILES=					\
@@ -21,7 +21,7 @@ clean:
 	find . -name "*.o" -print -delete
 
 $(LIB_NAME): $(LIB_OBJ_FILES)
-	$(CROSS)$(AR) -o $@ $^
+	$(CROSS)$(AR) csr $@ $^
 
 %.o: %.c
 	$(CROSS)$(CC) -o $@ -c $^ $(CFLAGS)

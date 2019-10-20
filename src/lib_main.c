@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <dexpert/dexfile.h>
 #include <dexpert/debug.h>
 #include <dexpert/file_utils.h>
-#include "dexfile_private.h"
+#include "dexfile_structure.h"
 
 
 int parse_dexfile(const char *dex_path, dexfile_t *arg)

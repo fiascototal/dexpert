@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <dexpert/file_utils.h>
 #include <dexpert/debug.h>
