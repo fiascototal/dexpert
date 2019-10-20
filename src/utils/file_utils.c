@@ -24,7 +24,7 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
 
     if ((fd = open(filepath, O_RDONLY)) < 0)
     {
-        DEBUG("[-] failed to open dex file %s (%s)\n", filepath, ERR_MSG);
+        DEBUG("[-] failed to open file %s (%s)\n", filepath, ERR_MSG);
         return (2);
     }
 
@@ -42,7 +42,7 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
     result = (uint8_t *)malloc(result_size);
     if (result == NULL)
     {
-        DEBUG("[-] allocate file for dex %s failed (%s)\n", filepath, ERR_MSG);
+        DEBUG("[-] allocate file for %s failed (%s)\n", filepath, ERR_MSG);
         close(fd);
         return (4);
     }
@@ -50,7 +50,7 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
     // read the dex file
     if (read(fd, result, result_size) < 0)
     {
-        DEBUG("[-] read dex file failed %s (%s)\n", filepath, ERR_MSG);
+        DEBUG("[-] read file failed %s (%s)\n", filepath, ERR_MSG);
         close(fd);
         free(result); result = NULL;
         return (5);
