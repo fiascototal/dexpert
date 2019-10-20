@@ -4,6 +4,12 @@ CFLAGS=-W -Wall -ansi -pedantic $(INCLUDES)
 LDFLAGS=-pie
 LIB_NAME=../src/dexpert.a
 
+if ${DEBUG}=y
+	CFLAGS += -g -ggdb -D_IS_DEBUG
+else
+	CFLAGS += -O2
+endif
+
 all: read_dex
 
 read_dex: read_dex.c $(LIB_NAME)
