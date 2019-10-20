@@ -7,35 +7,7 @@
 #include "dexfile_structure.h"
 
 
-int parse_dexfile(const char *dex_path, dexfile_t *arg)
-{
-    uint8_t *dex_data      = NULL;
-    uint64_t dex_data_size = 0;
-
-    if (arg == NULL)
-    {
-        DEBUG("[-] invalid arg\n");
-        return (1);
-    }
-
-    if (read_file(dex_path, &dex_data, &dex_data_size) != 0)
-    {
-        DEBUG("[-] read dex file failed %s\n", dex_path);
-        return (2);
-    }
-
-    if (parse_dexdata(dex_data, dex_data_size, arg) != 0)
-    {
-        DEBUG("[-] failed to parse the given dex\n");
-        free(dex_data); dex_data = NULL;
-        return (3);
-    }
-
-    return (0);
-}
-
-
-int parse_dexdata(uint8_t *dex_data, uint64_t dex_data_size, dexfile_t *arg)
+int dexfile_new(dexfile_t *arg)
 {
     struct s_dexfile *dex = NULL;
 
@@ -44,6 +16,14 @@ int parse_dexdata(uint8_t *dex_data, uint64_t dex_data_size, dexfile_t *arg)
         DEBUG("[-] invalid arg\n");
         return (1);
     }
+
+    dex = (struct s_dexfile *)malloc(sizeof (struct s_dexfile));
+    if (dex == NULL)
+    {
+        DEBUG("[-] failed to allocate the dex object (%s)\n", ERR_MSG);
+        return (2);
+    }
+    memset(dex, 0, sizeof (struct s_dexfile));
 
     *arg = (dexfile_t)dex;
     return (0);
@@ -58,4 +38,35 @@ void dexfile_close(dexfile_t arg)
         return;
         
     free(dex); dex = NULL;
+}
+
+
+int parse_dexfile(dexfile_t dex, const char *dex_path)
+{
+    uint8_t *dex_data      = NULL;
+    uint64_t dex_data_size = 0;
+
+    if (read_file(dex_path, &dex_data, &dex_data_size) != 0)
+    {
+        DEBUG("[-] read dex file failed %s\n", dex_path);
+        return (2);
+    }
+
+    if (parse_dexdata(dex, dex_data, dex_data_size) != 0)
+    {
+        DEBUG("[-] failed to parse the given dex\n");
+        free(dex_data); dex_data = NULL;
+        return (3);
+    }
+
+    free(dex_data); dex_data = NULL;
+    return (0);
+}
+
+
+int parse_dexdata(dexfile_t arg, uint8_t *dex_data, uint64_t dex_data_size)
+{
+    struct s_dexfile *dex = (struct s_dexfile *)arg;
+    
+    return (0);
 }

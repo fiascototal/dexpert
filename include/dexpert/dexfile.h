@@ -9,16 +9,14 @@
 */
 typedef void *dexfile_t;
 
-/*
-** open the given dex file and build a dexfile_t object (and return it)
-** return 0 on success
-*/
-int parse_dexfile(const char *dex_path, dexfile_t *new_dex);
-int parse_dexdata(uint8_t *dex_data, uint64_t dex_data_size, dexfile_t *new_dex);
+// create a new dexfile object
+int dexfile_new(dexfile_t *new_dex);
 
-/*
-** clean/free all structure allocated in the given dexfile_t object
-*/
+// delete a dexfile object
 void dexfile_close(dexfile_t dex);
+
+//open the given dex file and add it into the given dexfile object
+int parse_dexfile(dexfile_t dex, const char *dex_path);
+int parse_dexdata(dexfile_t dex, uint8_t *dex_data, uint64_t dex_data_size);
 
 #endif/*!__DEXFILE_H__*/
