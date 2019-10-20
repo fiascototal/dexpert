@@ -5,7 +5,9 @@ LDFLAGS=
 LIB_NAME=dexpert.a
 LIB_SRC_FILES=					\
 	lib_main.c					\
-	utils/file_utils.c
+	utils/file_utils.c			\
+	utils/adler32.c				\
+	parsing/parse_header.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
 ifdef DEBUG

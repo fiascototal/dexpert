@@ -3,13 +3,10 @@
 
 # include <stdint.h>
 
-/* DEX file magic number */
-# define DEX_MAGIC       "dex\n"
-
 /* versions, encoded in 4 bytes of ASCII */
-# define DEX_MAGIC_VERS_35  "035\0"
-# define DEX_MAGIC_VERS_36  "036\0"
-# define DEX_MAGIC_VERS_38  "038\0"
+# define DEX_MAGIC_VERS_35  "dex\n035\0"
+# define DEX_MAGIC_VERS_38  "dex\n038\0"
+# define DEX_MAGIC_VERS_39  "dex\n039\0"
 
 # define ENDIAN_CONSTANT			0x12345678;
 # define REVERSE_ENDIAN_CONSTANT	0x78563412;

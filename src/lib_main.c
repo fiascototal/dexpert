@@ -5,6 +5,7 @@
 #include <dexpert/debug.h>
 #include <dexpert/file_utils.h>
 #include "dexfile_structure.h"
+#include "parsing/parsers.h"
 
 
 int dexfile_new(dexfile_t *arg)
@@ -67,6 +68,21 @@ int parse_dexfile(dexfile_t dex, const char *dex_path)
 int parse_dexdata(dexfile_t arg, uint8_t *dex_data, uint64_t dex_data_size)
 {
     struct s_dexfile *dex = (struct s_dexfile *)arg;
+    header_item *hdr = NULL;
     
+    if (dex_data == NULL)
+    {
+        DEBUG("[-] invalid arguments\n");
+        return (1);
+    }
+
+    // let's say that the beginning is directly in the header format
+    hdr = (header_item *)dex_data;
+    if (parse_headers(dex, hdr, dex_data, dex_data_size) != 0)
+    {
+        DEBUG("[-] invalid dex header\n");
+        return (2);
+    }
+
     return (0);
 }
