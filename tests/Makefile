@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-W -Wall -Werror
+CFLAGS=-W -Wall -ansi -pedantic
 LDFLAGS=-pie
 
 all: leb128
