@@ -40,5 +40,11 @@ int parse_headers(struct s_dexfile *dex, header_item *hdr, uint8_t *data, uint64
         return (5);
     }
 
+    if (hdr->endianTag != ENDIAN_CONSTANT)
+    {
+        DEBUG("[-] sorry the reverse endianess is not supported\n");
+        return (6);
+    }
+
     return (0);
 }
