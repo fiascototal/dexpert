@@ -54,3 +54,7 @@ dkms.conf
 # editors specifs cache folders
 .vscode/
 tests/leb128
+
+# java & android stuff
+*.class
+*.dex
