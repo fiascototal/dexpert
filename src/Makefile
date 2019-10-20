@@ -1,5 +1,5 @@
 CC=clang
-INCLUDES=-I../includes -I.
+INCLUDES=-I../include -I.
 CFLAGS=-W -Wall -ansi -pedantic $(INCLUDES)
 LDFLAGS=
 LIB_NAME=dexpert.a
@@ -8,7 +8,7 @@ LIB_SRC_FILES=					\
 	utils/file_utils.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
-if ${DEBUG}=y
+ifdef DEBUG
 	CFLAGS += -g -ggdb -D_IS_DEBUG
 else
 	CFLAGS += -O2
