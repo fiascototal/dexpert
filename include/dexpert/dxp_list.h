@@ -6,6 +6,10 @@
 typedef void *dxp_list;
 typedef void *dxp_list_iterator;
 
+//
+// General stuff
+//
+
 // create a new list object
 dxp_list dxp_list_new();
 
@@ -20,6 +24,10 @@ void *dxp_list_pop(dxp_list l);
 
 // return the size of the list
 uint32_t dxp_list_length(dxp_list l);
+
+//
+// Iterator stuff
+//
 
 // return a new iterator
 dxp_list_iterator dxp_list_begin(dxp_list l);

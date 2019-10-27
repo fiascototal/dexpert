@@ -1,6 +1,4 @@
 #include <stdlib.h>
-#include <stdint.h>
-
 #include <dexpert/dxp_list.h>
 #include <dexpert/error_codes.h>
 
@@ -25,6 +23,10 @@ struct s_list_iterator
     struct s_list_item *current;
 };
 
+
+//
+// General stuff
+//
 
 static void _delete_item(struct s_list_item *item)
 {
@@ -159,6 +161,11 @@ uint32_t dxp_list_length(dxp_list l)
     struct s_list *list = (struct s_list *)l;
     return (list->size);
 }
+
+
+//
+// Iterator stuff
+//
 
 // return a new iterator
 dxp_list_iterator dxp_list_begin(dxp_list l)
