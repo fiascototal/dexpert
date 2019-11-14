@@ -1,9 +1,15 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <dexpert/dxp_rbtree.h>
 #include <dexpert/error_codes.h>
 
 
-
+/*
+Every node is either red or black.
+Every leaf (NULL) is black.
+If a node is red, then both its children are black.
+Every simple path from a node to a descendant leaf contains the same number of black nodes. 
+*/
 
 enum e_rbtree_color
 {
@@ -138,15 +144,19 @@ static int _rotate_left(struct s_rbtree_node *x)
         y->left->father = x;
 
     y->father = x->father;
-    if (x->father == NULL)
-        x = y;
-    else if (x == x->father->left)
-        x->father->left = y;
-    else
-        x->father->right = y;
+
+    if (x->father)
+    {
+        if (x == x->father->left)
+            x->father->left = y;
+        else
+            x->father->right = y;
+    }
     
     y->left = x;
     x->father = y;
+
+    return (0);
 }
 
 static int _rotate_right(struct s_rbtree_node *x)
@@ -159,15 +169,19 @@ static int _rotate_right(struct s_rbtree_node *x)
         y->right->father = x;
 
     y->father = x->father;
-    if (x->father == NULL)
-        x = y;
-    else if (x == x->father->right)
-        x->father->right = y;
-    else
-        x->father->left = y;
+
+    if (x->father)
+    {
+        if (x == x->father->right)
+            x->father->right = y;
+        else
+            x->father->left = y;
+    }
     
     y->right = x;
     x->father = y;
+
+    return (0);
 }
 
 static struct s_rbtree_node *_grand_father(struct s_rbtree_node *n)
@@ -209,16 +223,16 @@ static void _fix_rbtree(struct s_rbtree_node *n)
         // no father means root! so the color of the node is black
         n->color = BLACK;
     }
-    if (n->father->color == BLACK)
+    else if (n->father->color == BLACK)
     {
         /* everything is ok in this case */
     }
     else
     {   
         // so we have a father RED, so there is a problem. The rule says that we can't have 2 consecutive RED nodes
+
         u = _uncle(n);
-        
-        if (u != NULL && n->color == RED)
+        if (u != NULL && u->color == RED)
         {
             n->father->color = BLACK;
             u->color = BLACK;
@@ -232,12 +246,12 @@ static void _fix_rbtree(struct s_rbtree_node *n)
             p = n->father;
             g = _grand_father(n);
 
-            if (n == g->left->right)
+            if (g->left && n == g->left->right)
             {
                 _rotate_left(p);
                 n = n->left;
             }
-            else if (n == g->right->left)
+            else if (g->right && n == g->right->left)
             {
                 _rotate_right(p);
                 n = n->right;
@@ -261,9 +275,7 @@ static void _fix_rbtree(struct s_rbtree_node *n)
 int dxp_rbtree_insert(dxp_rbtree t, void *data)
 {
     struct s_rbtree      *tree     = (struct s_rbtree *)t;
-    struct s_rbtree_node *father   = NULL,    
-                         *cur_node = NULL,
-                         *new_node = NULL;
+    struct s_rbtree_node *new_node = NULL;
 
     if (tree == NULL || data == NULL)
         return (ERR_INVALID_ARG);
@@ -348,8 +360,15 @@ int dxp_rbtree_next(dxp_rbtree_iterator it)
             _it->current = _it->current->left;
     }
     else
+    {
+        // no right node, so we go up in the tree
+        // we just take care: we go up only to climb the tree from the right
+        while (_it->current->father != NULL &&
+               _it->current ==_it->current->father->right)
+            _it->current = _it->current->father;
         _it->current = _it->current->father;
-    
+    }
+        
     return (ERR_SUCCESS);
 }
 
@@ -363,4 +382,51 @@ void *dxp_rbtree_data(dxp_rbtree_iterator it)
 }
 
 // search if the given item is present in the rbtree. Return an iterator if found, NULL else.
-dxp_rbtree_iterator dxp_rbtree_find(dxp_rbtree t, void *data);
+dxp_rbtree_iterator dxp_rbtree_find(dxp_rbtree t, void *data)
+{
+    struct s_rbtree *tree     = (struct s_rbtree *)t;
+    void            *cur_data = NULL;
+
+    for (
+        dxp_rbtree_iterator it = dxp_rbtree_begin(t);
+        dxp_rbtree_end(it) != 1;
+        dxp_rbtree_next(it))
+    {
+        cur_data = dxp_rbtree_data(it);
+        if (cur_data)
+        {
+            if (tree->cmp_fct(cur_data, data) == 0)
+                return (it);
+        }
+    }
+
+    return (NULL);
+}
+
+
+static void _dxp_rbtree_print_rec(struct s_rbtree_node *cur_node, f_rbtree_print_node printer)
+{
+    
+    if (cur_node->left)
+    {
+        printf("    %d -> %d\n", (unsigned int)cur_node, (unsigned int)cur_node->left);
+        _dxp_rbtree_print_rec(cur_node->left, printer);
+    }
+    if (cur_node->right)
+    {
+        printf("    %d -> %d\n", (unsigned int)cur_node, (unsigned int)cur_node->right);
+        _dxp_rbtree_print_rec(cur_node->right, printer);
+    }
+    printf("    %d [color=%s, label=\"", (unsigned int)cur_node, (cur_node->color == RED) ? "red": "black");
+    printer(cur_node->data);
+    printf("\"];\n");
+}
+
+void dxp_rbtree_print(dxp_rbtree t, f_rbtree_print_node printer, const char *tree_name)
+{
+    struct s_rbtree *tree = (struct s_rbtree *)t;
+
+    printf("digraph %s {\n", tree_name);
+    _dxp_rbtree_print_rec(tree->root, printer);
+    printf("}\n");
+}

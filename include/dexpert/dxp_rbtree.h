@@ -11,6 +11,9 @@ typedef void *dxp_rbtree_iterator;
 //
 
 // the primitive used to compare 2 nodes (mandatory for the red-black tree)
+// if a == b => return 0
+// if a < b  => return neg val
+// if a > b  => return pos val 
 typedef int (*f_rbtree_cmp)(void *a, void *b);
 
 // create a new RBTREE object. Don't forget to add the fct to compare 2 nodes
@@ -43,5 +46,15 @@ void *dxp_rbtree_data(dxp_rbtree_iterator it);
 
 // search if the given item is present in the rbtree. Return an iterator if found, NULL else.
 dxp_rbtree_iterator dxp_rbtree_find(dxp_rbtree t, void *data);
+
+// for debug purpose only
+// @{
+
+// print the tree (in DOT format)
+// (use the given fct pointer to print the correct data format)
+typedef void (*f_rbtree_print_node)(void *node_data);
+void dxp_rbtree_print(dxp_rbtree t, f_rbtree_print_node printer, const char *tree_name);
+
+// @}
 
 #endif/*!__DXP_RBTREE_H__*/
