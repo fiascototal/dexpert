@@ -13,11 +13,16 @@ typedef void *dxp_rbtree_iterator;
 // the primitive used to compare 2 nodes (mandatory for the red-black tree)
 // if a == b => return 0
 // if a < b  => return neg val
-// if a > b  => return pos val 
+// if a > b  => return pos val
 typedef int (*f_rbtree_cmp)(void *a, void *b);
 
+// the primitive to delete a node
+// can be NULL
+typedef void (*f_rbtree_del_node)(void *);
+
+
 // create a new RBTREE object. Don't forget to add the fct to compare 2 nodes
-dxp_rbtree dxp_rbtree_new(f_rbtree_cmp cmp_fct);
+dxp_rbtree dxp_rbtree_new(f_rbtree_cmp cmp_fct, f_rbtree_del_node del_fct);
 
 // delete the given rbtree (and all nodes)
 int dxp_rbtree_delete(dxp_rbtree t);
@@ -25,8 +30,16 @@ int dxp_rbtree_delete(dxp_rbtree t);
 // add a new element
 int dxp_rbtree_insert(dxp_rbtree t, void *data);
 
+// add a new element (same as above) but we don't want duplicate
+// we return the already existing one if found
+void *dxp_rbtree_insert_unique(dxp_rbtree t, void *data);
+
 // return the size of the rbtree
 uint32_t dxp_rbtree_length(dxp_rbtree t);
+
+// find the given data in the rbtree.
+// return the data if found, NULL if not
+void *dxp_rbtree_find(dxp_rbtree t, void *data);
 
 //
 // Iterator stuff
@@ -43,9 +56,6 @@ int dxp_rbtree_next(dxp_rbtree_iterator it);
 
 // return the element of the current position of the given iterator
 void *dxp_rbtree_data(dxp_rbtree_iterator it);
-
-// search if the given item is present in the rbtree. Return an iterator if found, NULL else.
-dxp_rbtree_iterator dxp_rbtree_find(dxp_rbtree t, void *data);
 
 // for debug purpose only
 // @{

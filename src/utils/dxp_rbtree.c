@@ -8,7 +8,7 @@
 Every node is either red or black.
 Every leaf (NULL) is black.
 If a node is red, then both its children are black.
-Every simple path from a node to a descendant leaf contains the same number of black nodes. 
+Every simple path from a node to a descendant leaf contains the same number of black nodes.
 */
 
 enum e_rbtree_color
@@ -20,8 +20,8 @@ enum e_rbtree_color
 struct s_rbtree
 {
     struct s_rbtree_node *root;
-    uint32_t              size;
     f_rbtree_cmp          cmp_fct;
+    f_rbtree_del_node     del_fct;
 };
 
 struct s_rbtree_node
@@ -42,29 +42,32 @@ struct s_rbtree_iterator
 
 
 // create a new RBTREE object. Don't forget to add the fct to compare 2 nodes
-dxp_rbtree dxp_rbtree_new(f_rbtree_cmp cmp_fct)
+dxp_rbtree dxp_rbtree_new(f_rbtree_cmp cmp_fct, f_rbtree_del_node del_fct)
 {
     struct s_rbtree *result = NULL;
 
     result = (struct s_rbtree *)malloc(sizeof (struct s_rbtree));
     result->cmp_fct = cmp_fct;
+    result->del_fct = del_fct;
     result->root = NULL;
-    result->size = 0;
 
     return ((dxp_rbtree)result);
 }
 
-static void rec_delete_node(struct s_rbtree_node *cur_node)
+static void rec_delete_node(struct s_rbtree_node *cur_node, f_rbtree_del_node del_fct)
 {
     if (cur_node)
     {
         if (cur_node->left)
-            rec_delete_node(cur_node->left);
+            rec_delete_node(cur_node->left, del_fct);
         if (cur_node->right)
-            rec_delete_node(cur_node->right);
+            rec_delete_node(cur_node->right, del_fct);
         if (cur_node->data)
         {
-            free(cur_node->data);
+            if (del_fct)
+                del_fct(cur_node->data);
+            else
+                free(cur_node->data);
             cur_node->data = NULL;
         }
         cur_node->left = NULL;
@@ -83,10 +86,9 @@ int dxp_rbtree_delete(dxp_rbtree t)
     if (tree == NULL)
         return (ERR_INVALID_ARG);
 
-    rec_delete_node(tree->root);
+    rec_delete_node(tree->root, tree->del_fct);
     tree->root = NULL;
     tree->cmp_fct = NULL;
-    tree->size = 0;
     free(tree);
     tree = NULL;
 
@@ -152,7 +154,7 @@ static int _rotate_left(struct s_rbtree_node *x)
         else
             x->father->right = y;
     }
-    
+
     y->left = x;
     x->father = y;
 
@@ -177,7 +179,7 @@ static int _rotate_right(struct s_rbtree_node *x)
         else
             x->father->left = y;
     }
-    
+
     y->right = x;
     x->father = y;
 
@@ -228,7 +230,7 @@ static void _fix_rbtree(struct s_rbtree_node *n)
         /* everything is ok in this case */
     }
     else
-    {   
+    {
         // so we have a father RED, so there is a problem. The rule says that we can't have 2 consecutive RED nodes
 
         u = _uncle(n);
@@ -264,7 +266,7 @@ static void _fix_rbtree(struct s_rbtree_node *n)
                 _rotate_right(g);
             else
                 _rotate_left(g);
-            
+
             p->color = BLACK;
             g->color = RED;
         }
@@ -284,7 +286,6 @@ int dxp_rbtree_insert(dxp_rbtree t, void *data)
     {
         tree->root = _create_node(data);
         tree->root->color = BLACK;
-        tree->size = 1;
         return (ERR_SUCCESS);
     }
 
@@ -300,11 +301,109 @@ int dxp_rbtree_insert(dxp_rbtree t, void *data)
     return (ERR_SUCCESS);
 }
 
+
+static struct s_rbtree_node * _insert_unique_rec(struct s_rbtree_node *root, struct s_rbtree_node *new_node, f_rbtree_cmp cmp_fct)
+{
+    int cmp_ret = 0;
+
+    if (root != NULL)
+    {
+        cmp_ret = cmp_fct(root->data, new_node->data);
+
+        // the element we want to insert is already in the tree
+        if (cmp_ret == 0)
+            return (root);
+
+        if (cmp_ret > 0)
+        {
+            if (root->left != NULL)
+                return (_insert_unique_rec(root->left, new_node, cmp_fct));
+            root->left = new_node;
+        }
+        else
+        {
+            if (root->right != NULL)
+                return (_insert_unique_rec(root->right, new_node, cmp_fct));
+            root->right = new_node;
+        }
+    }
+    new_node->father = root;
+    return (new_node);
+}
+
+
+void *dxp_rbtree_insert_unique(dxp_rbtree t, void *data)
+{
+    struct s_rbtree      *tree          = (struct s_rbtree *)t;
+    struct s_rbtree_node *new_node      = NULL,
+                         *inserted_node = NULL;
+
+    if (tree->root == NULL)
+    {
+        tree->root = _create_node(data);
+        tree->root->color = BLACK;
+        return (data);
+    }
+
+    new_node = _create_node(data);
+    inserted_node = _insert_unique_rec(tree->root, new_node, tree->cmp_fct);
+    if (inserted_node != new_node)
+    {
+        free(new_node);
+        new_node = NULL;
+        return (inserted_node->data);
+    }
+
+    _fix_rbtree(new_node);
+
+    // update root
+    tree->root = new_node;
+    while (tree->root->father != NULL)
+        tree->root = tree->root->father;
+
+    return (data);
+}
+
+static uint32_t rec_rbtree_size(struct s_rbtree_node *node)
+{
+    if (node == NULL)
+        return (0);
+    return (1 + rec_rbtree_size(node->left) + rec_rbtree_size(node->right));
+}
+
 // return the size of the rbtree
 uint32_t dxp_rbtree_length(dxp_rbtree t)
 {
     struct s_rbtree *tree = (struct s_rbtree *)t;
-    return (tree->size);
+    return (rec_rbtree_size(tree->root));
+}
+
+
+static void *_rbtree_find_rec(struct s_rbtree_node *node, void *data, f_rbtree_cmp cmp_fct)
+{
+    int cmp_ret = 0;
+
+    if (node == NULL)
+        return (NULL);
+
+    cmp_ret = cmp_fct(node->data, data);
+
+    if (cmp_ret == 0)
+        return (node->data);
+    else if (cmp_ret < 0)
+        return (_rbtree_find_rec(node->left, data, cmp_fct));
+    else
+        return (_rbtree_find_rec(node->right, data, cmp_fct));
+}
+
+void *dxp_rbtree_find(dxp_rbtree t, void *data)
+{
+    struct s_rbtree *tree = (struct s_rbtree *)t;
+
+    if (tree == NULL || data == NULL)
+        return (NULL);
+
+    return (_rbtree_find_rec(tree->root, data, tree->cmp_fct));
 }
 
 //
@@ -326,7 +425,7 @@ dxp_rbtree_iterator dxp_rbtree_begin(dxp_rbtree t)
 
     while (result->current->left)
         result->current = result->current->left;
-    
+
     return (result);
 }
 
@@ -368,7 +467,7 @@ int dxp_rbtree_next(dxp_rbtree_iterator it)
             _it->current = _it->current->father;
         _it->current = _it->current->father;
     }
-        
+
     return (ERR_SUCCESS);
 }
 
@@ -381,32 +480,10 @@ void *dxp_rbtree_data(dxp_rbtree_iterator it)
     return (_it->current->data);
 }
 
-// search if the given item is present in the rbtree. Return an iterator if found, NULL else.
-dxp_rbtree_iterator dxp_rbtree_find(dxp_rbtree t, void *data)
-{
-    struct s_rbtree *tree     = (struct s_rbtree *)t;
-    void            *cur_data = NULL;
-
-    for (
-        dxp_rbtree_iterator it = dxp_rbtree_begin(t);
-        dxp_rbtree_end(it) != 1;
-        dxp_rbtree_next(it))
-    {
-        cur_data = dxp_rbtree_data(it);
-        if (cur_data)
-        {
-            if (tree->cmp_fct(cur_data, data) == 0)
-                return (it);
-        }
-    }
-
-    return (NULL);
-}
-
 
 static void _dxp_rbtree_print_rec(struct s_rbtree_node *cur_node, f_rbtree_print_node printer)
 {
-    
+
     if (cur_node->left)
     {
         printf("    %d -> %d\n", (unsigned int)cur_node, (unsigned int)cur_node->left);
