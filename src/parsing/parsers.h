@@ -2,10 +2,19 @@
 # define __PARSERS_H__
 
 # include <stdint.h>
-# include "../dexfile_structure.h"
-# include "../dex_objects/dex_header.h"
+# include <internal_structures/application.h>
+
+
+// parse the given DEX data
+int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size);
 
 // parse the DEX header of the given data
-int parse_headers(struct s_dexfile *dex, header_item *hdr, uint8_t *data, uint64_t data_size);
+int parse_header(struct s_application *app);
+
+// parse the map list
+int parse_map(struct s_application *app);
+
+// parse the strings table
+int parse_strings(struct s_application *app);
 
 #endif/*!__PARSERS_H__*/

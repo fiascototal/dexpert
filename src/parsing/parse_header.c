@@ -1,26 +1,30 @@
 #include <string.h>
-#include "parsers.h"
-#include "../utils/adler32.h"
 #include <dexpert/debug.h>
+#include <utils/adler32.h>
+#include "parsers.h"
 
 
-int parse_headers(struct s_dexfile *dex, header_item *hdr, uint8_t *data, uint64_t data_size)
+int parse_header(struct s_application *app)
 {
-    if (dex == NULL || hdr == NULL || data == NULL)
+    if (app == NULL)
     {
-        DEBUG("[-] invalid argument\n");
+        DEBUG("[-] parse header failed, invalid argument\n");
         return (1);
     }
 
-    if (memcmp(hdr->magic, DEX_MAGIC_VERS_35, 4) != 0)
+    app->tmp.hdr = (struct s_header_item *)app->tmp.data;
+    
+    // check the magic "dex\n"
+    if (memcmp(app->tmp.hdr->magic, DEX_MAGIC_VERS_35, 4) != 0)
     {
         DEBUG("[-] invalid dex magic\n");
         return (2);
     }
 
-    if (memcmp(hdr->magic, DEX_MAGIC_VERS_35, 8) == 0)
+    // set the version
+    if (memcmp(app->tmp.hdr->magic, DEX_MAGIC_VERS_35, 8) == 0)
     {
-        dex->version = DEX_35;
+        app->version = DEX_35;
     }
     else
     {
@@ -28,19 +32,19 @@ int parse_headers(struct s_dexfile *dex, header_item *hdr, uint8_t *data, uint64
         return (3);
     }
 
-    if (hdr->fileSize > data_size)
+    if (app->tmp.hdr->fileSize > app->tmp.size)
     {
         DEBUG("[-] invalid dex size (too big)\n");
         return (4);
     }
 
-    if (adler32(1, (uint8_t *)hdr + 8 + sizeof (uint32_t), hdr->fileSize - 8 - sizeof (uint32_t)) != hdr->checksum)
+    if (adler32(1, app->tmp.data + 8 + sizeof (uint32_t), app->tmp.hdr->fileSize - 8 - sizeof (uint32_t)) != app->tmp.hdr->checksum)
     {
         DEBUG("[-] invalid dex checksum\n");
         return (5);
     }
 
-    if (hdr->endianTag != ENDIAN_CONSTANT)
+    if (app->tmp.hdr->endianTag != ENDIAN_CONSTANT)
     {
         DEBUG("[-] sorry the reverse endianess is not supported\n");
         return (6);
