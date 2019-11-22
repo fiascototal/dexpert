@@ -53,7 +53,7 @@ uint32_t dxp_str_len(dxp_string s)
 }
 
 // return the string raw data
-uint8_t dxp_str_data(dxp_string s)
+uint8_t *dxp_str_data(dxp_string s)
 {
     struct s_dxp_string *str = (struct s_dxp_string *)s;
     return (str->data);

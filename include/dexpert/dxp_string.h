@@ -19,7 +19,7 @@ void dxp_str_del(dxp_string s);
 uint32_t dxp_str_len(dxp_string s);
 
 // return the string raw data
-uint8_t dxp_str_data(dxp_string s);
+uint8_t *dxp_str_data(dxp_string s);
 
 // compare 2 strings (like strcmp)
 # define STR_EQUAL   0
