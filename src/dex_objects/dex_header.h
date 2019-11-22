@@ -17,7 +17,8 @@
 appears in the header section
 alignment: 4 bytes
 */
-struct s_header_item {
+struct s_header_item
+{
     uint8_t   magic[8];           /* includes version number */
     uint32_t  checksum;           /* adler32 checksum */
     uint8_t   signature[kSHA1DigestLen]; /* SHA-1 hash */
@@ -42,6 +43,5 @@ struct s_header_item {
     uint32_t  dataSize;
     uint32_t  dataOff;
 };
-typedef struct s_header_item header_item;
 
 #endif /*!__DEX_HEADER__*/

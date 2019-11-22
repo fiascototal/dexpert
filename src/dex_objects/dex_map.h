@@ -38,10 +38,13 @@ struct s_map_item
     uint32_t offset;
 };
 
+/*
+
 struct s_map_list
 {
     uint32_t          size;
     struct s_map_item list[0];
 };
+*/
 
 #endif/*!__MAP_LIST_H__*/
