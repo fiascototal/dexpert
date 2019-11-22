@@ -4,10 +4,17 @@ CFLAGS=-W -Wall -ansi -pedantic -std=c11 -fPIC $(INCLUDES)
 LDFLAGS=
 LIB_NAME=dexpert.a
 LIB_SRC_FILES=					\
-	lib_main.c					\
+	dexfile.c					\
+	dxp_string.c				\
 	utils/file_utils.c			\
 	utils/adler32.c				\
-	parsing/parse_header.c
+	utils/dxp_rbtree.c			\
+	utils/leb128.c				\
+	utils/crc32.c				\
+	parsing/parse_dex.c			\
+	parsing/parse_header.c		\
+	parsing/parse_map.c			\
+	parsing/parse_strings.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
 ifdef DEBUG
