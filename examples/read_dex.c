@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <dexpert/dexfile.h>
 
+/* Example of a small program that use the dexpert library. */
 
 int main(int argc, char *argv[])
 {
@@ -18,13 +19,13 @@ int main(int argc, char *argv[])
         return (2);
     }
 
-    if (parse_dexfile(dex, argv[1]) != 0)
+    if (dexfile_open_file(dex, argv[1]) != 0)
     {
         fprintf(stderr, "[-] failed to parse the given dex file %s\n", argv[1]);
         return (3);
     }
 
-    printf("[+] Ok\n");
+    printf("[+] %d strings\n", dxp_rbtree_length(dexfile_get_strings(dex)));
 
     dexfile_close(dex);
     return (0);
