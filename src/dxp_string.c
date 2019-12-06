@@ -2,6 +2,7 @@
 #include <string.h>
 #include <dexpert/dxp_string.h>
 #include "utils/crc32.h"
+#include "internal_structures/application.h"
 
 
 /*
@@ -85,4 +86,68 @@ int dxp_str_cmp(dxp_string s1, dxp_string s2)
     else if (cmp_res > 0)
         return (STR_GREATER);
     return (STR_LOWER);
+}
+
+// Add a string in the given dex file
+// Return the added string (if does not already exists)
+dxp_string dxp_str_add(dexfile_t app, const char *s)
+{
+    dxp_string new_item = dxp_str_new((uint8_t *)s, strlen(s), strlen(s));
+    return (dxp_str_add2(app, new_item));
+}
+
+dxp_string dxp_str_add2(dexfile_t dex, dxp_string new_item)
+{
+    struct s_application *app = (struct s_application *)dex;
+    dxp_string            result;
+
+    result = dxp_rbtree_insert_unique(app->strings, new_item);
+
+    if (result != new_item)
+        dxp_str_del(new_item);
+
+    return (result);
+}
+
+// search the given string in the given dex file
+// return NULL if not found
+dxp_string dxp_str_find(dexfile_t app, const char *s)
+{
+    dxp_string new_item = dxp_str_new((uint8_t *)s, strlen(s), strlen(s));
+    dxp_string result   = dxp_str_find2(app, new_item);
+    dxp_str_del(new_item);
+    return (result);
+}
+
+dxp_string dxp_str_find2(dexfile_t dex, dxp_string s)
+{
+    struct s_application *app = (struct s_application *)dex;
+    return (dxp_rbtree_find(app->strings, s));
+}
+
+dxp_str_iterator dxp_str_begin(dexfile_t dex)
+{
+    struct s_application *app = (struct s_application *)dex;
+    return (dxp_rbtree_begin(app->strings));
+}
+
+int dxp_str_next(dxp_str_iterator it)
+{
+    return (dxp_rbtree_next(it));
+}
+
+int dxp_str_end(dxp_str_iterator it)
+{
+    return (dxp_rbtree_end(it));
+}
+
+dxp_string dxp_str_current(dxp_str_iterator it)
+{
+    return (dxp_rbtree_data(it));
+}
+
+void dxp_str_destroy_iterator(dxp_str_iterator it)
+{
+    free(it);
+    it = NULL;
 }

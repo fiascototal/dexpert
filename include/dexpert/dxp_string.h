@@ -2,6 +2,8 @@
 # define __DXP_STRING_H__
 
 # include <stdint.h>
+# include <dexpert/dexfile.h>
+
 
 typedef void *dxp_string;
 
@@ -28,5 +30,28 @@ uint8_t *dxp_str_data(dxp_string s);
 # define STR_LOWER   3
 int dxp_str_eq(dxp_string s1, dxp_string s2);
 int dxp_str_cmp(dxp_string s1, dxp_string s2);
+
+
+/*
+** dexfile related primitives
+*/
+
+// Add a string in the given dex file
+// Return the added string (if does not already exists)
+dxp_string dxp_str_add(dexfile_t app, const char *s);
+dxp_string dxp_str_add2(dexfile_t app, dxp_string new_item);
+
+// search the given string in the given dex file
+// return NULL if not found
+dxp_string dxp_str_find(dexfile_t app, const char *s);
+dxp_string dxp_str_find2(dexfile_t app, dxp_string s);
+
+// list iterator
+typedef void *dxp_str_iterator;
+dxp_str_iterator dxp_str_begin(dexfile_t app);
+int              dxp_str_next(dxp_str_iterator it);
+int              dxp_str_end(dxp_str_iterator it);
+dxp_string       dxp_str_current(dxp_str_iterator it);
+void             dxp_str_destroy_iterator(dxp_str_iterator it);
 
 #endif/*!__DXP_STRING_H__*/
