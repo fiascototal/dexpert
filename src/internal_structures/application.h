@@ -3,8 +3,8 @@
 
 # include <stdint.h>
 # include <dexpert/version.h>
-# include <dexpert/dxp_rbtree.h>
 # include <internal_structures/tmp_dexfile.h>
+# include "../utils/dxp_rbtree.h"
 
 
 /*
