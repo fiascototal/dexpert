@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         return (3);
     }
 
-    printf("[+] %d strings\n", dxp_rbtree_length(dexfile_get_strings(dex)));
+    printf("[+] %d strings\n", dxp_str_count(dex));
 
     dexfile_close(dex);
     return (0);
