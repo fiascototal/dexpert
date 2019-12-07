@@ -4,10 +4,10 @@
 #include <dexpert/dexfile.h>
 #include <dexpert/debug.h>
 #include <dexpert/file_utils.h>
-#include <dexpert/dxp_rbtree.h>
 #include <dexpert/dxp_string.h>
-#include <internal_structures/application.h>
-#include <parsing/parsers.h>
+#include "internal_structures/application.h"
+#include "parsing/parsers.h"
+#include "utils/dxp_rbtree.h"
 
 
 int dexfile_new(dexfile_t *dex)

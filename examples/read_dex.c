@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <dexpert/dexfile.h>
+#include <dexpert/dxp_string.h>
+
 
 /* Example of a small program that use the dexpert library. */
 
