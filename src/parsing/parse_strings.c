@@ -49,14 +49,10 @@ int parse_strings(struct s_application *app)
         // create a new string object
         new_item = dxp_str_new(data + string_off, string_size, utf16_size);
 
-        // update the string list
-        inserted_item = dxp_rbtree_insert_unique(app->strings, new_item);
-        if (inserted_item != new_item)
-        {
-            dxp_str_del(new_item);
-            new_item = NULL;
-        }
+        // update the string list of our dexfile
+        inserted_item = dxp_str_add2(app, new_item);
 
+        // update the fast indexed list
         app->tmp.strings[i] = inserted_item;
     }
 

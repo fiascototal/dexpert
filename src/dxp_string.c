@@ -151,3 +151,9 @@ void dxp_str_destroy_iterator(dxp_str_iterator it)
     free(it);
     it = NULL;
 }
+
+uint32_t dxp_str_count(dexfile_t dex)
+{
+    struct s_application *app = (struct s_application *)dex;
+    return (dxp_rbtree_length(app->strings));
+}

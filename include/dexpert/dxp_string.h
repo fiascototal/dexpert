@@ -54,4 +54,7 @@ int              dxp_str_end(dxp_str_iterator it);
 dxp_string       dxp_str_current(dxp_str_iterator it);
 void             dxp_str_destroy_iterator(dxp_str_iterator it);
 
+// count of the string table
+uint32_t dxp_str_count(dexfile_t app);
+
 #endif/*!__DXP_STRING_H__*/
