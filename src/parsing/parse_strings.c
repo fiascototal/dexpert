@@ -8,8 +8,7 @@
 
 int parse_strings(struct s_application *app)
 {
-    uint32_t   string_count = 0,
-               cur_off      = 0,
+    uint32_t   cur_off      = 0,
                string_off   = 0,
                string_size  = 0,
                utf16_size   = 0;
@@ -23,16 +22,10 @@ int parse_strings(struct s_application *app)
         return (1);
     }
 
-    string_count = app->tmp.hdr->stringIdsSize;
-
-    // allocate the tmp string list
-    app->tmp.strings = (dxp_string *)malloc(sizeof (dxp_string) * string_count);
-    memset(app->tmp.strings, 0, sizeof (dxp_string) * string_count);
-
     // iterate of the dex to read all strings
-    data = app->tmp.data;
-    cur_off = app->tmp.hdr->stringIdsOff;
-    for (uint32_t i = 0; i < string_count; i++)
+    data = app->tmp->data;
+    cur_off = app->tmp->hdr->stringIdsOff;
+    for (uint32_t i = 0; i < app->tmp->hdr->stringIdsSize; i++)
     {
         string_off = *(uint32_t *)(data + cur_off);
         cur_off += sizeof (uint32_t);
@@ -53,7 +46,7 @@ int parse_strings(struct s_application *app)
         inserted_item = dxp_str_add2(app, new_item);
 
         // update the fast indexed list
-        app->tmp.strings[i] = inserted_item;
+        app->tmp->strings[i] = inserted_item;
     }
 
     return (0);

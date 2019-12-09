@@ -16,10 +16,13 @@ struct s_application
     enum e_dex_version version;
 
     // the temporary dex object (contains some tables useful for indexing)
-    struct s_tmp_dexfile tmp;
+    struct s_tmp_dexfile *tmp;
 
     // the string list
     dxp_rbtree strings;
+
+    // the type list
+    dxp_rbtree types;
 };
 
 #endif/*!__DEXFILE_PRIVATE_H__*/

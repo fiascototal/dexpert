@@ -5,6 +5,7 @@
 #include <dexpert/debug.h>
 #include <dexpert/file_utils.h>
 #include <dexpert/dxp_string.h>
+#include <dexpert/dxp_type.h>
 #include "internal_structures/application.h"
 #include "parsing/parsers.h"
 #include "utils/dxp_rbtree.h"
@@ -32,6 +33,9 @@ int dexfile_new(dexfile_t *dex)
     // allocate a new strings map list
     app->strings = dxp_rbtree_new(dxp_str_cmp, dxp_str_del);
 
+    // alocate a new types map list
+    app->types = dxp_rbtree_new(dxp_type_cmp, dxp_type_del);
+
     *dex = (dexfile_t)app;
     return (0);
 }
@@ -44,18 +48,18 @@ void dexfile_close(dexfile_t dex)
     if (app == NULL)
         return;
 
-    // delete all temporary items
-    if (app->tmp.strings)
-    {
-        free(app->tmp.strings);
-        app->tmp.strings = NULL;
-    }
-
     // delete the list of strings
     if (app->strings)
     {
         dxp_rbtree_delete(app->strings);
         app->strings = NULL;
+    }
+
+    // delete the list of types
+    if (app->types)
+    {
+        dxp_rbtree_delete(app->types);
+        app->types = NULL;
     }
 
     free(app);
@@ -90,10 +94,4 @@ int dexfile_open_data(dexfile_t dex, uint8_t *dex_data, uint64_t dex_data_size)
 {
     struct s_application *app = (struct s_application *)dex;
     return (parse_dex(app, dex_data, dex_data_size));
-}
-
-dxp_rbtree dexfile_get_strings(dexfile_t dex)
-{
-    struct s_application *app = (struct s_application *)dex;
-    return (app->strings);
 }

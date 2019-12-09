@@ -6,6 +6,7 @@ LIB_NAME=dexpert.a
 LIB_SRC_FILES=					\
 	dexfile.c					\
 	dxp_string.c				\
+	dxp_type.c					\
 	utils/file_utils.c			\
 	utils/adler32.c				\
 	utils/dxp_rbtree.c			\
@@ -14,7 +15,8 @@ LIB_SRC_FILES=					\
 	parsing/parse_dex.c			\
 	parsing/parse_header.c		\
 	parsing/parse_map.c			\
-	parsing/parse_strings.c
+	parsing/parse_strings.c		\
+	parsing/parse_types.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
 ifdef DEBUG

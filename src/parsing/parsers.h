@@ -17,4 +17,7 @@ int parse_map(struct s_application *app);
 // parse the strings table
 int parse_strings(struct s_application *app);
 
+// parse the types table
+int parse_types(struct s_application *app);
+
 #endif/*!__PARSERS_H__*/
