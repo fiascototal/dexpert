@@ -22,11 +22,6 @@ void dxp_type_del(dxp_type t);
 dxp_string dxp_type_data(dxp_type t);
 
 // compare 2 types (like strcmp)
-# define TYPE_EQUAL     0
-# define TYPE_DIFF      1
-# define TYPE_GREATER   2
-# define TYPE_LOWER     3
-int dxp_type_eq(dxp_type t1, dxp_type t2);
 int dxp_type_cmp(dxp_type t1, dxp_type t2);
 
 

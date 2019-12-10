@@ -61,31 +61,11 @@ uint8_t *dxp_str_data(dxp_string s)
 }
 
 // compare 2 strings (like strcmp)
-int dxp_str_eq(dxp_string s1, dxp_string s2)
-{
-    struct s_dxp_string *str1 = (struct s_dxp_string *)s1;
-    struct s_dxp_string *str2 = (struct s_dxp_string *)s2;
-
-    if (str1->checksum == str2->checksum)
-    {
-        if (strcmp((char *)str1->data, (char *)str2->data) == 0)
-            return (STR_EQUAL);
-    }
-    return (STR_DIFF);
-}
-
-// compare 2 strings (like strcmp)
 int dxp_str_cmp(dxp_string s1, dxp_string s2)
 {
     struct s_dxp_string *str1 = (struct s_dxp_string *)s1;
     struct s_dxp_string *str2 = (struct s_dxp_string *)s2;
-    int cmp_res = strcmp((char *)str1->data, (char *)str2->data);
-
-    if (cmp_res == 0)
-        return (STR_EQUAL);
-    else if (cmp_res > 0)
-        return (STR_GREATER);
-    return (STR_LOWER);
+    return (strcmp((char *)str1->data, (char *)str2->data));
 }
 
 // Add a string in the given dex file

@@ -24,11 +24,6 @@ uint32_t dxp_str_len(dxp_string s);
 uint8_t *dxp_str_data(dxp_string s);
 
 // compare 2 strings (like strcmp)
-# define STR_EQUAL   0
-# define STR_DIFF    1
-# define STR_GREATER 2
-# define STR_LOWER   3
-int dxp_str_eq(dxp_string s1, dxp_string s2);
 int dxp_str_cmp(dxp_string s1, dxp_string s2);
 
 

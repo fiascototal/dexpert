@@ -44,13 +44,6 @@ dxp_string dxp_type_data(dxp_type t)
 }
 
 // compare 2 types (like strcmp)
-int dxp_type_eq(dxp_type t1, dxp_type t2)
-{
-    struct s_dxp_type *typ1 = (struct s_dxp_type *)t1,
-                      *typ2 = (struct s_dxp_type *)t2;
-    return (dxp_str_eq(typ1->s, typ2->s));
-}
-
 int dxp_type_cmp(dxp_type t1, dxp_type t2)
 {
     struct s_dxp_type *typ1 = (struct s_dxp_type *)t1,
