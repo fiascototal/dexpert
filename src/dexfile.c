@@ -33,8 +33,11 @@ int dexfile_new(dexfile_t *dex)
     // allocate a new strings map list
     app->strings = dxp_rbtree_new(dxp_str_cmp, dxp_str_del);
 
-    // alocate a new types map list
+    // allocate a new types map list
     app->types = dxp_rbtree_new(dxp_type_cmp, dxp_type_del);
+
+    // allocate a new prototype list
+    app->prototypes = dxp_rbtree_new(dxp_proto_cmp, dxp_proto_del);
 
     *dex = (dexfile_t)app;
     return (0);
@@ -60,6 +63,13 @@ void dexfile_close(dexfile_t dex)
     {
         dxp_rbtree_delete(app->types);
         app->types = NULL;
+    }
+
+    // delete the list of prototypes
+    if (app->prototypes)
+    {
+        dxp_rbtree_delete(app->prototypes);
+        app->prototypes = NULL;
     }
 
     free(app);

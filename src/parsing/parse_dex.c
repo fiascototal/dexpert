@@ -52,6 +52,12 @@ int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
         return (3);
     }
 
+    if ((ret = parse_prototypes(app)) != 0)
+    {
+        DEBUG("[-] parse dex prototypes failed (%d)\n", ret);
+        return (3);
+    }
+
     // once we have finish the parsing, we can delete the temp dex
     free(app->tmp);
     app->tmp = NULL;

@@ -23,6 +23,9 @@ struct s_application
 
     // the type list
     dxp_rbtree types;
+
+    // the prototype list
+    dxp_rbtree prototypes;
 };
 
 #endif/*!__DEXFILE_PRIVATE_H__*/

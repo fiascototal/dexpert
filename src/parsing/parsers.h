@@ -20,4 +20,7 @@ int parse_strings(struct s_application *app);
 // parse the types table
 int parse_types(struct s_application *app);
 
+// parse the prototypes table
+int parse_prototypes(struct s_application *app);
+
 #endif/*!__PARSERS_H__*/
