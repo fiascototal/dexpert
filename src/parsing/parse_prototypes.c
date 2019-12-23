@@ -3,7 +3,6 @@
 #include "parsers.h"
 #include "../debug.h"
 #include "../dex_objects/dex_prototype.h"
-#include "../utils/leb128.h"
 #include <dexpert/dxp_string.h>
 #include <dexpert/dxp_type.h>
 
@@ -52,7 +51,7 @@ int parse_prototypes(struct s_application *app)
             parameters_off += sizeof (uint32_t);
         }
 
-        // create a new type object
+        // create a new prototype object
         new_item = dxp_proto_new(ret_type, nb_parameters);
 
         // create arguments for this prototype (read the list in the data section)
