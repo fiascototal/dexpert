@@ -28,7 +28,7 @@ struct s_tmp_dexfile
     dxp_type types[ARRAY_MAX_SIZE];
 
     // an array of prototypes. We need it for keeping indexes
-    dxp_prototype prorotypes[ARRAY_MAX_SIZE];
+    dxp_prototype prototypes[ARRAY_MAX_SIZE];
 
     // the dex map
     // only the none redondancy elements with the header

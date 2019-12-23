@@ -70,7 +70,7 @@ int parse_prototypes(struct s_application *app)
         inserted_item = dxp_proto_add(app, new_item);
 
         // update the fast indexed list
-        app->tmp->prorotypes[i] = inserted_item;
+        app->tmp->prototypes[i] = inserted_item;
     }
 
     return (0);
