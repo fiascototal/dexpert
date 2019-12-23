@@ -17,7 +17,6 @@ int parse_prototypes(struct s_application *app)
     proto_id_item *cur_item       = NULL;
     dxp_type       ret_type,
                    cur_arg;
-    dxp_string     shorty_name;
     dxp_prototype  new_item,
                    inserted_item;
 
@@ -38,8 +37,6 @@ int parse_prototypes(struct s_application *app)
 
         // get the corresponding object (based on indexes)
         ret_type = app->tmp->types[cur_item->return_type_idx];
-        shorty_name = app->tmp->strings[cur_item->shorty_idx];
-        shorty_name = shorty_name; /* unused */
         parameters_off = cur_item->parameters_off;
 
         CHECK_OFFSET(parameters_off, 2);
