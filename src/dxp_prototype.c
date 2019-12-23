@@ -144,7 +144,7 @@ dxp_prototype dxp_proto_add(dexfile_t dex, dxp_prototype new_item)
     result = dxp_rbtree_insert_unique(app->prototypes, new_item);
 
     if (result != new_item)
-        dxp_str_del(new_item);
+        dxp_proto_del(new_item);
 
     return (result);
 }
