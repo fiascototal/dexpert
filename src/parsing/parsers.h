@@ -2,7 +2,7 @@
 # define __PARSERS_H__
 
 # include <stdint.h>
-# include <internal_structures/application.h>
+# include "../internal_structures/application.h"
 
 
 // parse the given DEX data
@@ -22,5 +22,8 @@ int parse_types(struct s_application *app);
 
 // parse the prototypes table
 int parse_prototypes(struct s_application *app);
+
+// parse the fields table
+int parse_fields(struct s_application *app);
 
 #endif/*!__PARSERS_H__*/

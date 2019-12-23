@@ -3,6 +3,7 @@
 #include <dexpert/dxp_string.h>
 #include <dexpert/dxp_type.h>
 #include <dexpert/dxp_prototype.h>
+#include <dexpert/dxp_field.h>
 
 
 /* Example of a small program that use the dexpert library. */
@@ -32,6 +33,7 @@ int main(int argc, char *argv[])
     printf("[+] %d strings\n", dxp_str_count(dex));
     printf("[+] %d types\n", dxp_type_count(dex));
     printf("[+] %d prototypes\n", dxp_proto_count(dex));
+    printf("[+] %d fields\n", dxp_field_count(dex));
 
     dexfile_close(dex);
     return (0);

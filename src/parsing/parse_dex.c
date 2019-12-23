@@ -40,19 +40,25 @@ int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
     if ((ret = parse_strings(app)) != 0)
     {
         DXP_DEBUG("[-] parse dex strings failed (%d)\n", ret);
-        return (2);
+        return (3);
     }
 
     if ((ret = parse_types(app)) != 0)
     {
         DXP_DEBUG("[-] parse dex types failed (%d)\n", ret);
-        return (3);
+        return (4);
     }
 
     if ((ret = parse_prototypes(app)) != 0)
     {
         DXP_DEBUG("[-] parse dex prototypes failed (%d)\n", ret);
-        return (3);
+        return (5);
+    }
+
+    if ((ret = parse_fields(app)) != 0)
+    {
+        DXP_DEBUG("[-] parse dex fields failed (%d)\n", ret);
+        return (6);
     }
 
     // once we have finish the parsing, we can delete the temp dex

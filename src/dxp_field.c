@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <dexpert/dxp_field.h>
 #include "debug.h"
 #include "internal_structures/application.h"

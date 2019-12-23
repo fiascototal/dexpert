@@ -2,7 +2,7 @@
 # define __TMP_DEXFILE_H__
 
 # include <stdint.h>
-# include <dex_objects/dex_header.h>
+# include "../dex_objects/dex_header.h"
 # include <dexpert/dxp_string.h>
 # include <dexpert/dxp_type.h>
 # include <dexpert/dxp_prototype.h>

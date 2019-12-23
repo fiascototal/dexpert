@@ -1,5 +1,5 @@
-CC=gcc
-INCLUDES=-I../include -I.
+CC=clang
+INCLUDES=-I../include
 CFLAGS=-W -Wall -ansi -pedantic -std=c11 -fPIC $(INCLUDES)
 LDFLAGS=
 LIB_NAME=dexpert.a
@@ -8,6 +8,7 @@ LIB_SRC_FILES=					\
 	dxp_string.c				\
 	dxp_type.c					\
 	dxp_prototype.c				\
+	dxp_field.c				    \
 	utils/file_utils.c			\
 	utils/adler32.c				\
 	utils/dxp_rbtree.c			\
@@ -18,7 +19,8 @@ LIB_SRC_FILES=					\
 	parsing/parse_map.c			\
 	parsing/parse_strings.c		\
 	parsing/parse_types.c		\
-	parsing/parse_prototypes.c
+	parsing/parse_prototypes.c  \
+	parsing/parse_fields.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
 ifdef DXP_DEBUG
