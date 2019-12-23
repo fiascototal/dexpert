@@ -8,7 +8,6 @@
 # include <dexpert/dxp_prototype.h>
 # include <dexpert/dxp_field.h>
 
-# define ARRAY_MAX_SIZE 65536
 
 /*
 ** A "temporary" structure useful when parsing a dex file
@@ -23,16 +22,16 @@ struct s_tmp_dexfile
     struct s_header_item *hdr;
 
     // an array of strings. We need it for keeping indexes
-    dxp_string strings[ARRAY_MAX_SIZE];
+    dxp_string *strings;
 
     // an array of types. We need it for keeping indexes
-    dxp_type types[ARRAY_MAX_SIZE];
+    dxp_type *types;
 
     // an array of prototypes. We need it for keeping indexes
-    dxp_prototype prototypes[ARRAY_MAX_SIZE];
+    dxp_prototype *prototypes;
 
     // an array of fields. We need it for keeping indexes.
-    dxp_field fields[ARRAY_MAX_SIZE];
+    dxp_field *fields;
 
     // the dex map
     // only the none redondancy elements with the header

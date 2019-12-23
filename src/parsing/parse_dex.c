@@ -5,6 +5,59 @@
 #include "../debug.h"
 
 
+static void _allocate_tmp(struct s_tmp_dexfile *tmp)
+{
+    uint32_t count = 0;
+
+    count = tmp->hdr->stringIdsSize;
+    tmp->strings = (dxp_string *)malloc(sizeof (dxp_string) * count);
+    memset(tmp->strings, 0, sizeof (dxp_string) * count);
+
+    count = tmp->hdr->typeIdsSize;
+    tmp->types = (dxp_type *)malloc(sizeof (dxp_type) * count);
+    memset(tmp->types, 0, sizeof (dxp_type) * count);
+
+    count = tmp->hdr->protoIdsSize;
+    tmp->prototypes = (dxp_prototype *)malloc(sizeof (dxp_prototype) * count);
+    memset(tmp->prototypes, 0, sizeof (dxp_prototype) * count);
+
+    count = tmp->hdr->fieldIdsSize;
+    tmp->fields = (dxp_field *)malloc(sizeof (dxp_field) * count);
+    memset(tmp->fields, 0, sizeof (dxp_field) * count);
+}
+
+
+static void _free_tmp(struct s_tmp_dexfile *tmp)
+{
+    if (tmp->strings)
+    {
+        free(tmp->strings);
+        tmp->strings = NULL;
+    }
+
+    if (tmp->types)
+    {
+        free(tmp->types);
+        tmp->types = NULL;
+    }
+
+    if (tmp->prototypes)
+    {
+        free(tmp->prototypes);
+        tmp->prototypes = NULL;
+    }
+
+    if (tmp->fields)
+    {
+        free(tmp->fields);
+        tmp->fields = NULL;
+    }
+
+    free(tmp);
+    tmp= NULL;
+}
+
+
 int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
 {
     int ret = 0;
@@ -15,7 +68,7 @@ int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
     if (app->tmp)
     {
         DXP_DEBUG("[-] the app is not clean, the tmp struct is still there\n");
-        free(app->tmp);
+        _free_tmp(app->tmp);
         app->tmp = NULL;
     }
 
@@ -30,6 +83,8 @@ int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
         DXP_DEBUG("[-] parse dex header failed (%d)\n", ret);
         return (1);
     }
+
+    _allocate_tmp(app->tmp);
 
     if ((ret = parse_map(app)) != 0)
     {
@@ -62,7 +117,7 @@ int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
     }
 
     // once we have finish the parsing, we can delete the temp dex
-    free(app->tmp);
+    _free_tmp(app->tmp);
     app->tmp = NULL;
 
     return (0);
