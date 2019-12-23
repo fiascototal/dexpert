@@ -140,6 +140,7 @@ dxp_prototype dxp_proto_add(dexfile_t dex, dxp_prototype new_item)
     dxp_prototype         result;
 
     CHECK_ARG(app, NULL);
+    CHECK_ARG(new_item, NULL);
 
     result = dxp_rbtree_insert_unique(app->prototypes, new_item);
 
@@ -155,6 +156,7 @@ dxp_prototype dxp_proto_find(dexfile_t dex, dxp_prototype p)
 {
     struct s_application *app = (struct s_application *)dex;
     CHECK_ARG(app, NULL);
+    CHECK_ARG(p, NULL);
     return (dxp_rbtree_find(app->prototypes, p));
 }
 
