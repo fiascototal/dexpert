@@ -6,6 +6,7 @@
 # include <dexpert/dxp_string.h>
 # include <dexpert/dxp_type.h>
 # include <dexpert/dxp_prototype.h>
+# include <dexpert/dxp_field.h>
 
 # define ARRAY_MAX_SIZE 65536
 
@@ -29,6 +30,9 @@ struct s_tmp_dexfile
 
     // an array of prototypes. We need it for keeping indexes
     dxp_prototype prototypes[ARRAY_MAX_SIZE];
+
+    // an array of fields. We need it for keeping indexes.
+    dxp_field fields[ARRAY_MAX_SIZE];
 
     // the dex map
     // only the none redondancy elements with the header

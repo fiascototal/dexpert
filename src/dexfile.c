@@ -31,6 +31,9 @@ int dexfile_new(dexfile_t *dex)
     // allocate a new prototype list
     app->prototypes = dxp_rbtree_new(dxp_proto_cmp, dxp_proto_del);
 
+    // allocate a new field list
+    app->fields = dxp_rbtree_new(dxp_field_cmp, dxp_field_del);
+
     *dex = (dexfile_t)app;
     return (0);
 }
@@ -62,6 +65,13 @@ void dexfile_close(dexfile_t dex)
     {
         dxp_rbtree_delete(app->prototypes);
         app->prototypes = NULL;
+    }
+
+    // delete the list of fields
+    if (app->fields)
+    {
+        dxp_rbtree_delete(app->fields);
+        app->fields = NULL;
     }
 
     free(app);

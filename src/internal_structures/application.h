@@ -26,6 +26,9 @@ struct s_application
 
     // the prototype list
     dxp_rbtree prototypes;
+
+    // the field list
+    dxp_rbtree fields;
 };
 
 #endif/*!__DEXFILE_PRIVATE_H__*/
