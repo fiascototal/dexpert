@@ -1,9 +1,9 @@
 #include <dexpert/dxp_prototype.h>
 #include <dexpert/dxp_string.h>
-#include <dexpert/debug.h>
 #include <stdlib.h>
 #include <string.h>
 #include "internal_structures/application.h"
+#include "debug.h"
 
 
 /*
@@ -43,10 +43,13 @@ dxp_prototype dxp_proto_new(dxp_type return_type, uint32_t nb_args)
 dxp_prototype dxp_proto_set_arg(dxp_prototype p, uint32_t idx, dxp_type arg_type)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
-    
-    if (proto == NULL || idx >= proto->nb_arg || arg_type == NULL)
+
+    CHECK_ARG(proto, NULL);
+    CHECK_ARG(arg_type, NULL);
+
+    if (idx >= proto->nb_arg)
     {
-        DEBUG("[-] invalid prototype argument\n");
+        DXP_DEBUG("[-] invalid prototype argument idx\n");
         return (NULL);
     }
 
@@ -75,16 +78,19 @@ void dxp_proto_del(dxp_prototype p)
 dxp_type dxp_proto_get_ret_type(dxp_prototype p)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
+    CHECK_ARG(proto, NULL);
     return (proto->return_type);
 }
 uint32_t dxp_proto_get_args_number(dxp_prototype p)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
+    CHECK_ARG(proto, 0);
     return (proto->nb_arg);
 }
 dxp_type dxp_proto_get_arg(dxp_prototype p, uint32_t idx)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
+    CHECK_ARG(proto, NULL);
     return (proto->args[idx]);
 }
 
@@ -93,8 +99,12 @@ int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2)
 {
     struct s_dxp_prototype *proto1 = (struct s_dxp_prototype *)p1,
                            *proto2 = (struct s_dxp_prototype *)p2;
-    int ret = dxp_type_cmp(proto1->return_type, proto2->return_type);
+    int                     ret    = 0;
 
+    CHECK_ARG(proto1, 0);
+    CHECK_ARG(proto2, 0);
+
+    ret = dxp_type_cmp(proto1->return_type, proto2->return_type);
     if (ret != 0)
         return (ret);
 
@@ -103,7 +113,7 @@ int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2)
         // if the proto1 has more argument than proto2, we considere proto1 greater
         if (i >= proto2->nb_arg)
             return (1);
-        
+
         ret = dxp_type_cmp(proto1->args[i], proto2->args[i]);
         if (ret != 0)
             return (ret);
@@ -112,7 +122,7 @@ int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2)
     // maybe the both proto are identic (same arguments)
     if (proto1->nb_arg == proto2->nb_arg)
         return (0);
-    
+
     // if we are here, proto1 has less argument than proto2, we consider proto2 greater
     return (-1);
 }
@@ -129,6 +139,8 @@ dxp_prototype dxp_proto_add(dexfile_t dex, dxp_prototype new_item)
     struct s_application *app = (struct s_application *)dex;
     dxp_prototype         result;
 
+    CHECK_ARG(app, NULL);
+
     result = dxp_rbtree_insert_unique(app->prototypes, new_item);
 
     if (result != new_item)
@@ -142,6 +154,7 @@ dxp_prototype dxp_proto_add(dexfile_t dex, dxp_prototype new_item)
 dxp_prototype dxp_proto_find(dexfile_t dex, dxp_prototype p)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(app, NULL);
     return (dxp_rbtree_find(app->prototypes, p));
 }
 
@@ -149,5 +162,6 @@ dxp_prototype dxp_proto_find(dexfile_t dex, dxp_prototype p)
 uint32_t dxp_proto_count(dexfile_t dex)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(app, 0);
     return (dxp_rbtree_length(app->prototypes));
 }

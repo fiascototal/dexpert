@@ -3,6 +3,7 @@
 #include <dexpert/dxp_string.h>
 #include "utils/crc32.h"
 #include "internal_structures/application.h"
+#include "debug.h"
 
 
 /*
@@ -22,9 +23,11 @@ dxp_string dxp_str_new(uint8_t *data, uint32_t data_size, uint32_t utf16_size)
     struct s_dxp_string *result = NULL;
 
     result = (struct s_dxp_string *)malloc(sizeof (struct s_dxp_string));
+    CHECK_ALLOCATION(result, NULL);
     memset(result, 0, sizeof (struct s_dxp_string));
 
     result->data = (uint8_t *)malloc(data_size + 1);
+    CHECK_ALLOCATION(result->data, NULL);
     memset(result->data, 0, data_size + 1);
     memcpy(result->data, data, data_size);
     result->utf16_size = utf16_size;
@@ -50,6 +53,7 @@ void dxp_str_del(dxp_string s)
 uint32_t dxp_str_len(dxp_string s)
 {
     struct s_dxp_string *str = (struct s_dxp_string *)s;
+    CHECK_ARG(str, 0);
     return (str->utf16_size);
 }
 
@@ -57,6 +61,7 @@ uint32_t dxp_str_len(dxp_string s)
 uint8_t *dxp_str_data(dxp_string s)
 {
     struct s_dxp_string *str = (struct s_dxp_string *)s;
+    CHECK_ARG(str, NULL);
     return (str->data);
 }
 
@@ -65,6 +70,8 @@ int dxp_str_cmp(dxp_string s1, dxp_string s2)
 {
     struct s_dxp_string *str1 = (struct s_dxp_string *)s1;
     struct s_dxp_string *str2 = (struct s_dxp_string *)s2;
+    CHECK_ARG(str1, 0);
+    CHECK_ARG(str2, 0);
     return (strcmp((char *)str1->data, (char *)str2->data));
 }
 
@@ -80,6 +87,9 @@ dxp_string dxp_str_add2(dexfile_t dex, dxp_string new_item)
 {
     struct s_application *app = (struct s_application *)dex;
     dxp_string            result;
+
+    CHECK_ARG(dex, NULL);
+    CHECK_ARG(new_item, NULL);
 
     result = dxp_rbtree_insert_unique(app->strings, new_item);
 
@@ -102,27 +112,33 @@ dxp_string dxp_str_find(dexfile_t app, const char *s)
 dxp_string dxp_str_find2(dexfile_t dex, dxp_string s)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, NULL);
+    CHECK_ARG(s, NULL);
     return (dxp_rbtree_find(app->strings, s));
 }
 
 dxp_str_iterator dxp_str_begin(dexfile_t dex)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, NULL);
     return (dxp_rbtree_begin(app->strings));
 }
 
 int dxp_str_next(dxp_str_iterator it)
 {
+    CHECK_ARG(it, 0);
     return (dxp_rbtree_next(it));
 }
 
 int dxp_str_end(dxp_str_iterator it)
 {
+    CHECK_ARG(it, 0);
     return (dxp_rbtree_end(it));
 }
 
 dxp_string dxp_str_current(dxp_str_iterator it)
 {
+    CHECK_ARG(it, NULL);
     return (dxp_rbtree_data(it));
 }
 
@@ -135,5 +151,6 @@ void dxp_str_destroy_iterator(dxp_str_iterator it)
 uint32_t dxp_str_count(dexfile_t dex)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, 0);
     return (dxp_rbtree_length(app->strings));
 }

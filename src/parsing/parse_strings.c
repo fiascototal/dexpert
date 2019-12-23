@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
-#include <dexpert/debug.h>
-#include <dexpert/dxp_string.h>
-#include <utils/leb128.h>
 #include "parsers.h"
+#include "../debug.h"
+#include "../utils/leb128.h"
+#include <dexpert/dxp_string.h>
 
 
 int parse_strings(struct s_application *app)
@@ -16,19 +16,19 @@ int parse_strings(struct s_application *app)
     dxp_string new_item,
                inserted_item;
 
-    if (app == NULL)
-    {
-        DEBUG("[-] invalid arguments\n");
-        return (1);
-    }
+    CHECK_ARG(app, 1);
 
     // iterate of the dex to read all strings
     data = app->tmp->data;
     cur_off = app->tmp->hdr->stringIdsOff;
     for (uint32_t i = 0; i < app->tmp->hdr->stringIdsSize; i++)
     {
+        CHECK_OFFSET(cur_off, 2);
+
         string_off = *(uint32_t *)(data + cur_off);
         cur_off += sizeof (uint32_t);
+
+        CHECK_OFFSET(string_off, 2);
 
         // read the string size (utf16 unit)
         utf16_size = 0;

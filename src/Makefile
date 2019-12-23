@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 INCLUDES=-I../include -I.
 CFLAGS=-W -Wall -ansi -pedantic -std=c11 -fPIC $(INCLUDES)
 LDFLAGS=
@@ -21,8 +21,8 @@ LIB_SRC_FILES=					\
 	parsing/parse_prototypes.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
-ifdef DEBUG
-	CFLAGS += -g -ggdb -D_IS_DEBUG
+ifdef DXP_DEBUG
+	CFLAGS += -g -ggdb -D_DXP_DEBUG
 else
 	CFLAGS += -O2
 endif

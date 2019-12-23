@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 INCLUDES=-I../include
 CFLAGS=-W -Wall -ansi -pedantic -std=c11 -fPIC $(INCLUDES)
 LDFLAGS=-pie

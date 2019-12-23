@@ -2,6 +2,7 @@
 #include <string.h>
 #include <dexpert/dxp_type.h>
 #include "internal_structures/application.h"
+#include "debug.h"
 
 
 /*
@@ -18,7 +19,11 @@ dxp_type dxp_type_new(dxp_string s)
 {
     struct s_dxp_type *result = NULL;
 
+    CHECK_ARG(s, NULL);
+
     result = (struct s_dxp_type *)malloc(sizeof (struct s_dxp_type));
+    CHECK_ALLOCATION(result, NULL);
+
     memset(result, 0, sizeof (struct s_dxp_type));
     result->s = s;
 
@@ -40,6 +45,7 @@ void dxp_type_del(dxp_type t)
 dxp_string dxp_type_data(dxp_type t)
 {
     struct s_dxp_type *typ = (struct s_dxp_type *)t;
+    CHECK_ARG(t, NULL);
     return (typ->s);
 }
 
@@ -48,6 +54,8 @@ int dxp_type_cmp(dxp_type t1, dxp_type t2)
 {
     struct s_dxp_type *typ1 = (struct s_dxp_type *)t1,
                       *typ2 = (struct s_dxp_type *)t2;
+    CHECK_ARG(typ1, 0);
+    CHECK_ARG(typ2, 0);
     return (dxp_str_cmp(typ1->s, typ2->s));
 }
 
@@ -68,6 +76,9 @@ dxp_type dxp_type_add2(dexfile_t dex, dxp_string s)
 {
     dxp_type t;
 
+    CHECK_ARG(dex, NULL);
+    CHECK_ARG(s, NULL);
+
     s = dxp_str_add2(dex, s);
     t = dxp_type_new(s);
     return (dxp_type_add3(dex, t));
@@ -77,6 +88,9 @@ dxp_type dxp_type_add3(dexfile_t dex, dxp_type new_item)
 {
     struct s_application *app = (struct s_application *)dex;
     dxp_type              result;
+
+    CHECK_ARG(app, NULL);
+    CHECK_ARG(new_item, NULL);
 
     result = dxp_rbtree_insert_unique(app->types, new_item);
 
@@ -90,9 +104,13 @@ dxp_type dxp_type_add3(dexfile_t dex, dxp_type new_item)
 // return NULL if not found
 dxp_type dxp_type_find(dexfile_t app, const char *t)
 {
-    dxp_string tmp_s = dxp_str_new((uint8_t *)t, strlen(t), strlen(t));
-    dxp_string dex_s   = dxp_str_find2(app, tmp_s);
-    dxp_type tmp_t, result;
+    dxp_string tmp_s, dex_s;
+    dxp_type   tmp_t, result;
+
+    CHECK_ARG(app, NULL);
+
+    tmp_s = dxp_str_new((uint8_t *)t, strlen(t), strlen(t));
+    dex_s = dxp_str_find2(app, tmp_s);
 
     dxp_str_del(tmp_s);
 
@@ -109,6 +127,8 @@ dxp_type dxp_type_find(dexfile_t app, const char *t)
 dxp_type dxp_type_find2(dexfile_t dex, dxp_type t)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, NULL);
+    CHECK_ARG(t, NULL);
     return (dxp_rbtree_find(app->types, t));
 }
 
@@ -116,6 +136,7 @@ dxp_type dxp_type_find2(dexfile_t dex, dxp_type t)
 dxp_type_iterator dxp_type_begin(dexfile_t dex)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, NULL);
     return (dxp_rbtree_begin(app->types));
 }
 
@@ -131,18 +152,23 @@ int dxp_type_end(dxp_type_iterator it)
 
 dxp_type dxp_type_current(dxp_type_iterator it)
 {
+    CHECK_ARG(it, NULL);
     return (dxp_rbtree_data(it));
 }
 
 void dxp_type_destroy_iterator(dxp_type_iterator it)
 {
-    free(it);
-    it = NULL;
+    if (it)
+    {
+        free(it);
+        it = NULL;
+    }
 }
 
 // count of the string table
 uint32_t dxp_type_count(dexfile_t dex)
 {
     struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, 0);
     return (dxp_rbtree_length(app->types));
 }

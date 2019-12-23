@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include <dexpert/file_utils.h>
-#include <dexpert/debug.h>
+#include "../debug.h"
 
 
 int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
@@ -17,15 +17,12 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
     int         fd          = 0;
     struct stat st;
 
-    if (data == NULL || data_size == NULL)
-    {
-        DEBUG("[-] invalid argument\n");
-        return (1);
-    }
+    CHECK_ARG(data, 1);
+    CHECK_ARG(data_size, 1);
 
     if ((fd = open(filepath, O_RDONLY)) < 0)
     {
-        DEBUG("[-] failed to open file %s (%s)\n", filepath, ERR_MSG);
+        DXP_DEBUG("[-] failed to open file %s (%s)\n", filepath, ERR_MSG);
         return (2);
     }
 
@@ -33,7 +30,7 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
     memset(&st, 0, sizeof (struct stat));
     if (fstat(fd, &st) != 0)
     {
-        DEBUG("[-] failed to stat file %s (%s)\n", filepath, ERR_MSG);
+        DXP_DEBUG("[-] failed to stat file %s (%s)\n", filepath, ERR_MSG);
         close(fd);
         return (3);
     }
@@ -43,7 +40,7 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
     result = (uint8_t *)malloc(result_size);
     if (result == NULL)
     {
-        DEBUG("[-] allocate file for %s failed (%s)\n", filepath, ERR_MSG);
+        DXP_DEBUG("[-] allocate file for %s failed (%s)\n", filepath, ERR_MSG);
         close(fd);
         return (4);
     }
@@ -51,7 +48,7 @@ int read_file(const char *filepath, uint8_t **data, uint64_t *data_size)
     // read the dex file
     if (read(fd, result, result_size) < 0)
     {
-        DEBUG("[-] read file failed %s (%s)\n", filepath, ERR_MSG);
+        DXP_DEBUG("[-] read file failed %s (%s)\n", filepath, ERR_MSG);
         close(fd);
         free(result); result = NULL;
         return (5);

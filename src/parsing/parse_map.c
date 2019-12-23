@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include <dexpert/debug.h>
-#include <dex_objects/dex_map.h>
 #include "parsers.h"
+#include "../dex_objects/dex_map.h"
+#include "../debug.h"
 
 
 int parse_map(struct s_application *app)
@@ -10,18 +10,10 @@ int parse_map(struct s_application *app)
                        cur_off       = 0;
     struct s_map_item *cur_item      = NULL;
 
-    if (app == NULL)
-    {
-        DEBUG("[-] invalid argument\n");
-        return (1);
-    }
+    CHECK_ARG(app, 1);
 
     cur_off = app->tmp->hdr->mapOff;
-    if (cur_off + sizeof (uint32_t) > app->tmp->size)
-    {
-        DEBUG("[-] map offset (0x%x) is out of the dexfile (sz: 0x%x)\n", cur_off, app->tmp->size);
-        return (2);
-    }
+    CHECK_OFFSET(cur_off, 2);
 
     // get the number of map entries
     map_elt_count = *(uint32_t *)(app->tmp->data + cur_off);
@@ -30,20 +22,12 @@ int parse_map(struct s_application *app)
     // iterate on all map entries
     for (uint32_t i = 0; i < map_elt_count; i++)
     {
-        if (cur_off + sizeof (struct s_map_item) > app->tmp->size)
-        {
-            DEBUG("[-] map entry at 0x%x is out of the dexfile (sz: 0x%x)\n", cur_off, app->tmp->size);
-            return (3);
-        }
+        CHECK_OFFSET(cur_off, 2);
 
         cur_item = (struct s_map_item *)(app->tmp->data + cur_off);
         cur_off += sizeof (struct s_map_item);
 
-        if (cur_item->offset > app->tmp->size)
-        {
-            DEBUG("[-] invalid offset 0x%x in map entry 0x%x\n", cur_item->offset, cur_item->type);
-            return (4);
-        }
+        CHECK_OFFSET(cur_item->offset, 2);
 
         switch (cur_item->type)
         {
@@ -108,7 +92,7 @@ int parse_map(struct s_application *app)
             app->tmp->annotation_directory_item_count = cur_item->size;
             break;
         default:
-            DEBUG("[-] invalid map entry, unknown type 0x%x\n", cur_item->type);
+            DXP_DEBUG("[-] invalid map entry, unknown type 0x%x\n", cur_item->type);
             return (5);
             break;
         }

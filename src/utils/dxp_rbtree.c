@@ -486,15 +486,15 @@ static void _dxp_rbtree_print_rec(struct s_rbtree_node *cur_node, f_rbtree_print
 
     if (cur_node->left)
     {
-        printf("    %d -> %d\n", (unsigned int)cur_node, (unsigned int)cur_node->left);
+        printf("    %p -> %p\n", (void*)cur_node, (void*)cur_node->left);
         _dxp_rbtree_print_rec(cur_node->left, printer);
     }
     if (cur_node->right)
     {
-        printf("    %d -> %d\n", (unsigned int)cur_node, (unsigned int)cur_node->right);
+        printf("    %p -> %p\n", (void*)cur_node, (void*)cur_node->right);
         _dxp_rbtree_print_rec(cur_node->right, printer);
     }
-    printf("    %d [color=%s, label=\"", (unsigned int)cur_node, (cur_node->color == RED) ? "red": "black");
+    printf("    %p [color=%s, label=\"", (void*)cur_node, (cur_node->color == RED) ? "red": "black");
     printer(cur_node->data);
     printf("\"];\n");
 }

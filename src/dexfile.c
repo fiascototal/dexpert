@@ -2,32 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dexpert/dexfile.h>
-#include <dexpert/debug.h>
 #include <dexpert/file_utils.h>
 #include <dexpert/dxp_string.h>
 #include <dexpert/dxp_type.h>
 #include "internal_structures/application.h"
 #include "parsing/parsers.h"
 #include "utils/dxp_rbtree.h"
+#include "debug.h"
 
 
 int dexfile_new(dexfile_t *dex)
 {
     struct s_application *app = NULL;
 
-    if (dex == NULL)
-    {
-        DEBUG("[-] invalid arg\n");
-        return (1);
-    }
+    CHECK_ARG(dex, 1);
 
     // allocate a new application object
     app = (struct s_application *)malloc(sizeof (struct s_application));
-    if (app == NULL)
-    {
-        DEBUG("[-] failed to allocate the dex object (%s)\n", ERR_MSG);
-        return (2);
-    }
+    CHECK_ALLOCATION(app, 2);
     memset(app, 0, sizeof (struct s_application));
 
     // allocate a new strings map list
@@ -48,7 +40,7 @@ void dexfile_close(dexfile_t dex)
 {
     struct s_application *app = (struct s_application *)dex;
 
-    if (app == NULL)
+    if (dex == NULL)
         return;
 
     // delete the list of strings
@@ -84,13 +76,13 @@ int dexfile_open_file(dexfile_t dex, const char *dex_path)
 
     if (read_file(dex_path, &dex_data, &dex_data_size) != 0)
     {
-        DEBUG("[-] read dex file failed %s\n", dex_path);
+        DXP_DEBUG("[-] read dex file failed %s\n", dex_path);
         return (2);
     }
 
     if (dexfile_open_data(dex, dex_data, dex_data_size) != 0)
     {
-        DEBUG("[-] failed to parse the given dex\n");
+        DXP_DEBUG("[-] failed to parse the given dex\n");
         free(dex_data); dex_data = NULL;
         return (3);
     }
