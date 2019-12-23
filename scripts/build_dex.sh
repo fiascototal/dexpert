@@ -2,7 +2,7 @@
 
 if [ $# -eq 0 ]; then
     echo "[-] usage: ./compil.sh file1.java file2.java ..."
-    exti 1
+    exit 1
 fi
 
 javac $* || exit 1
