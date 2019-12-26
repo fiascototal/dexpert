@@ -5,6 +5,8 @@
 #include <dexpert/file_utils.h>
 #include <dexpert/dxp_string.h>
 #include <dexpert/dxp_type.h>
+#include <dexpert/dxp_prototype.h>
+#include <dexpert/dxp_method.h>
 #include "internal_structures/application.h"
 #include "parsing/parsers.h"
 #include "utils/dxp_rbtree.h"
@@ -33,6 +35,9 @@ int dexfile_new(dexfile_t *dex)
 
     // allocate a new field list
     app->fields = dxp_rbtree_new(dxp_field_cmp, dxp_field_del);
+
+    // allocate a new method list
+    app->methods = dxp_rbtree_new(dxp_method_cmp, dxp_method_del);
 
     *dex = (dexfile_t)app;
     return (0);
@@ -72,6 +77,13 @@ void dexfile_close(dexfile_t dex)
     {
         dxp_rbtree_delete(app->fields);
         app->fields = NULL;
+    }
+
+    // delete the list of methods
+    if (app->methods)
+    {
+        dxp_rbtree_delete(app->methods);
+        app->methods = NULL;
     }
 
     free(app);

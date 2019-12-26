@@ -29,6 +29,9 @@ struct s_application
 
     // the field list
     dxp_rbtree fields;
+
+    // the method list
+    dxp_rbtree methods;
 };
 
 #endif/*!__DEXFILE_PRIVATE_H__*/

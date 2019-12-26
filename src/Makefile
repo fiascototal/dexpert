@@ -9,6 +9,7 @@ LIB_SRC_FILES=					\
 	dxp_type.c					\
 	dxp_prototype.c				\
 	dxp_field.c				    \
+	dxp_method.c			    \
 	utils/file_utils.c			\
 	utils/adler32.c				\
 	utils/dxp_rbtree.c			\
