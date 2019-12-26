@@ -63,7 +63,7 @@ int parse_prototypes(struct s_application *app)
         }
 
         // update the prototype list of our dexfile
-        inserted_item = dxp_proto_add(app, new_item);
+        inserted_item = dxp_proto_add2(app, new_item);
 
         // update the fast indexed list
         app->tmp->prototypes[i] = inserted_item;
