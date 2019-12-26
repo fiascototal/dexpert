@@ -41,7 +41,7 @@ int parse_fields(struct s_application *app)
         // create a new field object
         new_item = dxp_field_new(cur_cls, cur_typ, cur_name);
 
-        // update the prototype list of our dexfile
+        // update the field list of our dexfile
         inserted_item = dxp_field_add2(app, new_item);
 
         // update the fast indexed list
