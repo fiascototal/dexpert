@@ -24,6 +24,10 @@ static void _allocate_tmp(struct s_tmp_dexfile *tmp)
     count = tmp->hdr->fieldIdsSize;
     tmp->fields = (dxp_field *)malloc(sizeof (dxp_field) * count);
     memset(tmp->fields, 0, sizeof (dxp_field) * count);
+
+    count = tmp->hdr->methodIdsSize;
+    tmp->methods = (dxp_method *)malloc(sizeof (dxp_method) * count);
+    memset(tmp->methods, 0, sizeof (dxp_method) * count);
 }
 
 
@@ -51,6 +55,12 @@ static void _free_tmp(struct s_tmp_dexfile *tmp)
     {
         free(tmp->fields);
         tmp->fields = NULL;
+    }
+
+    if (tmp->methods)
+    {
+        free(tmp->methods);
+        tmp->methods = NULL;
     }
 
     free(tmp);
@@ -114,6 +124,12 @@ int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size)
     {
         DXP_DEBUG("[-] parse dex fields failed (%d)\n", ret);
         return (6);
+    }
+
+    if ((ret = parse_methods(app)) != 0)
+    {
+        DXP_DEBUG("[-] parse dex methods failed (%d)\n", ret);
+        return (7);
     }
 
     // once we have finish the parsing, we can delete the temp dex

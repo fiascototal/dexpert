@@ -7,6 +7,7 @@
 # include <dexpert/dxp_type.h>
 # include <dexpert/dxp_prototype.h>
 # include <dexpert/dxp_field.h>
+# include <dexpert/dxp_method.h>
 
 
 /*
@@ -32,6 +33,9 @@ struct s_tmp_dexfile
 
     // an array of fields. We need it for keeping indexes.
     dxp_field *fields;
+
+    // an array of methods. We need it for keeping indexes.
+    dxp_method *methods;
 
     // the dex map
     // only the none redondancy elements with the header

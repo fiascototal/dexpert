@@ -21,7 +21,8 @@ LIB_SRC_FILES=					\
 	parsing/parse_strings.c		\
 	parsing/parse_types.c		\
 	parsing/parse_prototypes.c  \
-	parsing/parse_fields.c
+	parsing/parse_fields.c      \
+	parsing/parse_methods.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
 ifdef DXP_DEBUG
