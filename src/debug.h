@@ -15,6 +15,10 @@
 # define CHECK_OFFSET(off, ret) if (off >= app->tmp->size) { DXP_DEBUG("[-] invalid offset (0x%x) out of file\n", off); return (ret); }
 # define CHECK_STRING_IDX(idx, ret) if (idx >= app->tmp->hdr->stringIdsSize) { DXP_DEBUG("[-] invalid string index (0x%x)\n", idx); return (ret); }
 # define CHECK_TYPE_IDX(idx, ret) if (idx >= app->tmp->hdr->typeIdsSize) { DXP_DEBUG("[-] invalid type index (0x%x)\n", idx); return (ret); }
+# define CHECK_PROTOTYPE_IDX(idx, ret) if (idx >= app->tmp->hdr->protoIdsSize) { DXP_DEBUG("[-] invalid prototype index (0x%x)\n", idx); return (ret); }
+# define CHECK_FIELD_IDX(idx, ret) if (idx >= app->tmp->hdr->fieldIdsSize) { DXP_DEBUG("[-] invalid field index (0x%x)\n", idx); return (ret); }
+# define CHECK_METHOD_IDX(idx, ret) if (idx >= app->tmp->hdr->methodIdsSize) { DXP_DEBUG("[-] invalid method index (0x%x)\n", idx); return (ret); }
+
 
 # else/*!_DXP_DEBUG*/
 
@@ -26,6 +30,9 @@
 # define CHECK_OFFSET(off, ret)
 # define CHECK_STRING_IDX(idx, ret)
 # define CHECK_TYPE_IDX(idx, ret)
+# define CHECK_PROTOTYPE_IDX(idx, ret)
+# define CHECK_FIELD_IDX(idx, ret)
+# define CHECK_METHOD_IDX(idx, ret)
 
 # endif/*!_DXP_DEBUG*/
 
