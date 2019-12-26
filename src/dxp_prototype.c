@@ -134,7 +134,83 @@ int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2)
 
 // add a prototype in the given dex file
 // return the added item, or the existing one
-dxp_prototype dxp_proto_add(dexfile_t dex, dxp_prototype new_item)
+
+dxp_prototype dxp_proto_add(dexfile_t dex, const char *s)
+{
+    struct s_application *app = (struct s_application *)dex;
+    dxp_prototype         result;
+    dxp_type              cur_type;
+    char    *pattern_found = NULL,
+            *tmp           = NULL,
+            *arg           = NULL;
+    uint32_t nb_arg        = 0;
+
+    CHECK_ARG(app, NULL);
+
+    //
+    // 1) search the return type
+    //
+
+    pattern_found = strstr(s, ":");
+    if (pattern_found == NULL)
+    {
+        DXP_DEBUG("[-] invalid prototype str format, no return type\n");
+        return (NULL);
+    }
+
+    tmp = (char *)malloc((unsigned int)(pattern_found - s) + 1);
+    memcpy(tmp, s, (unsigned int)(pattern_found - s));
+    tmp[(unsigned int)(pattern_found - s)] = 0;
+    cur_type = dxp_type_add(app, tmp);
+    free(tmp); tmp = NULL;
+
+    // skip the ':'
+    pattern_found += 1;
+
+    // loop to the arguments
+    nb_arg = 0;
+    if (strlen(pattern_found) == 0)
+    {
+        result = dxp_proto_new(cur_type, 0);
+    }
+    else
+    {
+        // count the number of argument
+        nb_arg = 1;
+        for (uint32_t i = 0; i < strlen(pattern_found); i++)
+            if (pattern_found[i] == ',')
+                nb_arg += 1;
+        result = dxp_proto_new(cur_type, nb_arg);
+
+        // loop of args
+        arg = pattern_found;
+        nb_arg = 0;
+        while ((pattern_found = strstr(arg, ",")) != NULL)
+        {
+            // extract the arg type
+            tmp = (char *)malloc((uint32_t)(pattern_found - arg));
+            memcpy(tmp, arg, (uint32_t)(pattern_found - arg));
+            tmp[(uint32_t)(pattern_found - arg)] = 0;
+            cur_type = dxp_type_add(app, tmp);
+            free(tmp); tmp = NULL;
+
+            // add the argument in the prototype
+            dxp_proto_set_arg(result, nb_arg++, cur_type);
+
+            // skip the ','
+            arg = pattern_found + 1;
+        }
+
+        // manage the last type
+        cur_type = dxp_type_add(app, arg);
+        dxp_proto_set_arg(result, nb_arg++, cur_type);
+    }
+
+    return (dxp_proto_add2(dex, result));
+}
+
+
+dxp_prototype dxp_proto_add2(dexfile_t dex, dxp_prototype new_item)
 {
     struct s_application *app = (struct s_application *)dex;
     dxp_prototype         result;

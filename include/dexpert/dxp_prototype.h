@@ -35,7 +35,8 @@ int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2);
 
 // add a prototype in the given dex file
 // return the added item, or the existing one
-dxp_prototype dxp_proto_add(dexfile_t app, dxp_prototype new_item);
+dxp_prototype dxp_proto_add(dexfile_t app, const char *prototype);
+dxp_prototype dxp_proto_add2(dexfile_t app, dxp_prototype new_item);
 
 // search the given prototype in the given dex file
 // return NULL if not found
