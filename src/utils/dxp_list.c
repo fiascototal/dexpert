@@ -34,6 +34,7 @@ static void _delete_item(struct s_list_item *item)
     item->pred = NULL;
     item->data = NULL;
     free(item);
+    item = NULL;
 }
 
 // create a new list object
@@ -69,13 +70,6 @@ int dxp_list_delete(dxp_list l)
         {
             tmp = current;
             current = current->next;
-
-            if (tmp->data)
-            {
-                free(tmp->data);
-                tmp->data = NULL;
-            }
-
             _delete_item(tmp);
         }
     }
@@ -160,6 +154,46 @@ uint32_t dxp_list_length(dxp_list l)
 {
     struct s_list *list = (struct s_list *)l;
     return (list->size);
+}
+
+// return the data at the given index.
+// if the index is negative, we start from the back
+void *dxp_list_get(dxp_list l, int index)
+{
+    struct s_list      *list     = (struct s_list *)l;
+    struct s_list_item *cur_item = NULL;
+
+    if (list == NULL)
+        return (NULL);
+
+    if (index > 0)
+    {
+        if (index > list->size)
+            return (NULL);
+
+        cur_item = list->head;
+        while (index > 0)
+        {
+            cur_item = cur_item->next;
+            index--;
+        }
+        return (cur_item->data);
+    }
+    else
+    {
+        index *= -1;
+        index -= 1;
+        if (index > list->size)
+            return (NULL);
+
+        cur_item = list->tail;
+        while (index > 0)
+        {
+            cur_item = cur_item->pred;
+            index--;
+        }
+        return (cur_item->data);
+    }
 }
 
 
