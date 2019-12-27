@@ -2,6 +2,7 @@
 #include <dexpert/dxp_string.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils/dxp_list.h"
 #include "internal_structures/application.h"
 #include "debug.h"
 
@@ -12,48 +13,39 @@
 struct s_dxp_prototype
 {
     // a short string representation of of the prototype
-    dxp_string  shorty;
+    dxp_string shorty;
 
     // the return type of the method
-    dxp_type    return_type;
+    dxp_type   return_type;
 
-    // the arguments types
-    uint32_t    nb_arg;
-    dxp_type   *args;
+    // the arguments
+    dxp_list   args;
 };
 
 
-dxp_prototype dxp_proto_new(dxp_type return_type, uint32_t nb_args)
+dxp_prototype dxp_proto_new(dxp_type return_type)
 {
     struct s_dxp_prototype *result = NULL;
 
     result = (struct s_dxp_prototype *)malloc(sizeof (struct s_dxp_prototype));
     memset(result, 0, sizeof (struct s_dxp_prototype));
 
+    result->args = dxp_list_new();
     result->return_type = return_type;
-    result->nb_arg = nb_args;
-
-    result->args = (dxp_type *)malloc(nb_args * sizeof (dxp_type));
-    memset(result->args, 0, nb_args * sizeof (dxp_type));
 
     return ((dxp_prototype)result);
 }
 
 // append a new type in the argument list
-dxp_prototype dxp_proto_set_arg(dxp_prototype p, uint32_t idx, dxp_type arg_type)
+dxp_prototype dxp_proto_add_arg(dxp_prototype p, dxp_type arg_type)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
 
     CHECK_ARG(proto, NULL);
     CHECK_ARG(arg_type, NULL);
 
-    if (idx >= proto->nb_arg)
-    {
-        DXP_DEBUG("[-] invalid prototype argument idx\n");
-        return (NULL);
-    }
+    dxp_list_push(proto->args, arg_type);
 
-    proto->args[idx] = arg_type;
     return (p);
 }
 
@@ -64,34 +56,54 @@ void dxp_proto_del(dxp_prototype p)
 
     if (proto)
     {
-        if (proto->args)
-        {
-            free(proto->args);
-            proto->args = NULL;
-        }
+        dxp_list_delete(proto->args);
         free(proto);
         proto = NULL;
     }
 }
 
-// getters
+
+// return the "return type" of the given prototype
 dxp_type dxp_proto_get_ret_type(dxp_prototype p)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
     CHECK_ARG(proto, NULL);
     return (proto->return_type);
 }
-uint32_t dxp_proto_get_args_number(dxp_prototype p)
+
+// return the number of argument of the given prototype
+uint32_t dxp_proto_get_args_count(dxp_prototype p)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
     CHECK_ARG(proto, 0);
-    return (proto->nb_arg);
+    return (dxp_list_length(proto->args));
 }
-dxp_type dxp_proto_get_arg(dxp_prototype p, uint32_t idx)
+
+// return the argument at the given index
+// if the index is negative, it starts from the last argument
+dxp_type dxp_proto_get_arg(dxp_prototype p, int idx)
 {
     struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
     CHECK_ARG(proto, NULL);
-    return (proto->args[idx]);
+    return (dxp_list_get(proto->args, idx));
+}
+
+// return the shorty name of the prototype
+dxp_string dxp_proto_get_shorty(dxp_prototype p)
+{
+    struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
+    CHECK_ARG(proto, NULL);
+    return (proto->shorty);
+}
+
+// set the shorty name of the given prototype
+dxp_prototype dxp_proto_set_shorty(dxp_prototype p, dxp_string s)
+{
+    struct s_dxp_prototype *proto = (struct s_dxp_prototype *)p;
+    CHECK_ARG(proto, NULL);
+    CHECK_ARG(s, NULL);
+    proto->shorty = s;
+    return (p);
 }
 
 // compare 2 types (like strcmp)
@@ -108,19 +120,19 @@ int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2)
     if (ret != 0)
         return (ret);
 
-    for (uint32_t i = 0; i < proto1->nb_arg; i++)
+    for (uint32_t i = 0; i < dxp_list_length(proto1->args); i++)
     {
         // if the proto1 has more argument than proto2, we considere proto1 greater
-        if (i >= proto2->nb_arg)
+        if (i >= dxp_list_length(proto2->args))
             return (1);
 
-        ret = dxp_type_cmp(proto1->args[i], proto2->args[i]);
+        ret = dxp_type_cmp(dxp_list_get(proto1->args, i), dxp_list_get(proto2->args, i));
         if (ret != 0)
             return (ret);
     }
 
     // maybe the both proto are identic (same arguments)
-    if (proto1->nb_arg == proto2->nb_arg)
+    if (dxp_list_length(proto1->args) == dxp_list_length(proto2->args))
         return (0);
 
     // if we are here, proto1 has less argument than proto2, we consider proto2 greater
@@ -167,24 +179,12 @@ dxp_prototype dxp_proto_add(dexfile_t dex, const char *s)
     // skip the ':'
     pattern_found += 1;
 
-    // loop to the arguments
-    nb_arg = 0;
-    if (strlen(pattern_found) == 0)
-    {
-        result = dxp_proto_new(cur_type, 0);
-    }
-    else
-    {
-        // count the number of argument
-        nb_arg = 1;
-        for (uint32_t i = 0; i < strlen(pattern_found); i++)
-            if (pattern_found[i] == ',')
-                nb_arg += 1;
-        result = dxp_proto_new(cur_type, nb_arg);
+    result = dxp_proto_new(cur_type);
 
+    if (strlen(pattern_found) > 0)
+    {
         // loop of args
         arg = pattern_found;
-        nb_arg = 0;
         while ((pattern_found = strstr(arg, ",")) != NULL)
         {
             // extract the arg type
@@ -195,7 +195,7 @@ dxp_prototype dxp_proto_add(dexfile_t dex, const char *s)
             free(tmp); tmp = NULL;
 
             // add the argument in the prototype
-            dxp_proto_set_arg(result, nb_arg++, cur_type);
+            dxp_proto_add_arg(result, cur_type);
 
             // skip the ','
             arg = pattern_found + 1;
@@ -203,7 +203,7 @@ dxp_prototype dxp_proto_add(dexfile_t dex, const char *s)
 
         // manage the last type
         cur_type = dxp_type_add(app, arg);
-        dxp_proto_set_arg(result, nb_arg++, cur_type);
+        dxp_proto_add_arg(result, cur_type);
     }
 
     return (dxp_proto_add2(dex, result));

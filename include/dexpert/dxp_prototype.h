@@ -12,18 +12,29 @@ typedef void *dxp_prototype;
 */
 
 // allocate a new prototype object
-dxp_prototype dxp_proto_new(dxp_type return_type, uint32_t nb_args);
+dxp_prototype dxp_proto_new(dxp_type return_type);
 
 // append a new type in the argument list
-dxp_prototype dxp_proto_set_arg(dxp_prototype p, uint32_t idx, dxp_type arg_type);
+dxp_prototype dxp_proto_add_arg(dxp_prototype p, dxp_type arg_type);
 
 // delete/free a prototype object
 void dxp_proto_del(dxp_prototype p);
 
-// getters
+// return the "return type" of the given prototype
 dxp_type dxp_proto_get_ret_type(dxp_prototype p);
-uint32_t dxp_proto_get_args_number(dxp_prototype p);
-dxp_type dxp_proto_get_arg(dxp_prototype p, uint32_t idx);
+
+// return the number of argument of the given prototype
+uint32_t dxp_proto_get_args_count(dxp_prototype p);
+
+// return the argument at the given index
+// if the index is negative, it starts from the last argument
+dxp_type dxp_proto_get_arg(dxp_prototype p, int idx);
+
+// return the shorty name of the prototype
+dxp_string dxp_proto_get_shorty(dxp_prototype p);
+
+// set the shorty name of the given prototype
+dxp_prototype dxp_proto_set_shorty(dxp_prototype p, dxp_string s);
 
 // compare 2 prototypes (like strcmp)
 int dxp_proto_cmp(dxp_prototype p1, dxp_prototype p2);
@@ -42,7 +53,7 @@ dxp_prototype dxp_proto_add2(dexfile_t app, dxp_prototype new_item);
 // return NULL if not found
 dxp_prototype dxp_proto_find(dexfile_t app, dxp_prototype p);
 
-// count of the prototype table
+// size of the prototype array in the given dexfile
 uint32_t dxp_proto_count(dexfile_t app);
 
 #endif/*!__DXP_PROTOTYPE_H__*/
