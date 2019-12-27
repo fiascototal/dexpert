@@ -41,15 +41,15 @@ int parse_prototypes(struct s_application *app)
 
         CHECK_OFFSET(parameters_off, 2);
 
+        // create a new prototype object
+        new_item = dxp_proto_new(ret_type);
+
         nb_parameters = 0;
         if (parameters_off != 0)
         {
             nb_parameters = *(uint32_t *)(app->tmp->data + parameters_off);
             parameters_off += sizeof (uint32_t);
         }
-
-        // create a new prototype object
-        new_item = dxp_proto_new(ret_type, nb_parameters);
 
         // create arguments for this prototype (read the list in the data section)
         for (uint32_t j = 0; j < nb_parameters; j++)
@@ -58,7 +58,7 @@ int parse_prototypes(struct s_application *app)
             CHECK_TYPE_IDX(cur_arg_index, 3);
 
             cur_arg = app->tmp->types[cur_arg_index];
-            dxp_proto_set_arg(new_item, j, cur_arg);
+            dxp_proto_add_arg(new_item, cur_arg);
             parameters_off += sizeof (uint32_t);
         }
 
