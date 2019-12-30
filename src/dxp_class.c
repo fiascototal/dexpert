@@ -6,6 +6,7 @@
 #include <dexpert/access_flags.h>
 #include "debug.h"
 #include "utils/dxp_list.h"
+#include "internal_structures/application.h"
 
 
 struct s_dxp_class
@@ -142,4 +143,56 @@ dxp_type dxp_class_get_interface(dxp_class c, int idx)
     struct s_dxp_class *cls = (struct s_dxp_class *)c;
     CHECK_ARG(c, NULL);
     return (dxp_list_get(cls->interfaces, idx));
+}
+
+
+// add a class in the given dex file
+// return the added item, or the existing one
+dxp_class dxp_class_add(dexfile_t dex, dxp_class new_item)
+{
+    struct s_application *app = (struct s_application *)dex;
+
+    CHECK_ARG(dex, NULL);
+    CHECK_ARG(new_item, NULL);
+
+    if (dxp_class_find(dex, new_item) != NULL)
+    {
+        DXP_DEBUG("[-] this class already exists\n");
+        return (NULL);
+    }
+
+    dxp_list_push(app->classes, new_item);
+    return (new_item);
+}
+
+// search the given class in the given dex file
+// return NULL if not found
+dxp_class dxp_class_find(dexfile_t dex, dxp_class p)
+{
+    struct s_application *app = (struct s_application *)dex;
+    dxp_list_iterator     it;
+    dxp_class             cur_cls;
+
+    CHECK_ARG(dex, NULL);
+    CHECK_ARG(p, NULL);
+
+    for (it = dxp_list_begin(app->classes); dxp_list_end(it) != 1; dxp_list_next(it))
+    {
+        cur_cls = (dxp_class)dxp_list_data(it);
+        if (dxp_type_cmp(dxp_class_get_type(p), dxp_class_get_type(cur_cls)) == 0)
+        {
+            dxp_list_destroy_iterator(it);
+            return (cur_cls);
+        }
+    }
+
+    return (NULL);
+}
+
+// count of the prototype table
+uint32_t dxp_class_count(dexfile_t dex)
+{
+    struct s_application *app = (struct s_application *)dex;
+    CHECK_ARG(dex, 0);
+    return (dxp_list_length(app->classes));
 }

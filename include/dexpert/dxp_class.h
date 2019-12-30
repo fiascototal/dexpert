@@ -1,6 +1,7 @@
 #ifndef __DXP_CLASS_H__
 # define __DXP_CLASS_H__
 
+# include <dexpert/dexfile.h>
 # include <dexpert/dxp_type.h>
 # include <dexpert/dxp_string.h>
 # include <stdint.h>
@@ -47,5 +48,20 @@ uint32_t dxp_class_get_interface_count(dxp_class c);
 // return the interface at the given position
 // if the index is negative, it starts from the end
 dxp_type dxp_class_get_interface(dxp_class c, int idx);
+
+/*
+** dexfile related primitives
+*/
+
+// add a class in the given dex file
+// return the added item, or the existing one
+dxp_class dxp_class_add(dexfile_t app, dxp_class new_item);
+
+// search the given class in the given dex file
+// return NULL if not found
+dxp_class dxp_class_find(dexfile_t app, dxp_class p);
+
+// count of the prototype table
+uint32_t dxp_class_count(dexfile_t app);
 
 #endif/*!__DXP_CLASS_H__*/
