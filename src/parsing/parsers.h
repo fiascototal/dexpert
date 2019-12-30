@@ -29,4 +29,7 @@ int parse_fields(struct s_application *app);
 // parse the methods table
 int parse_methods(struct s_application *app);
 
+// parse the classes table
+int parse_classes(struct s_application *app);
+
 #endif/*!__PARSERS_H__*/

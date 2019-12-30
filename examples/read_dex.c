@@ -5,6 +5,7 @@
 #include <dexpert/dxp_prototype.h>
 #include <dexpert/dxp_field.h>
 #include <dexpert/dxp_method.h>
+#include <dexpert/dxp_class.h>
 
 
 /* Example of a small program that use the dexpert library. */
@@ -36,6 +37,7 @@ int main(int argc, char *argv[])
     printf("[+] %d prototypes\n", dxp_proto_count(dex));
     printf("[+] %d fields\n", dxp_field_count(dex));
     printf("[+] %d methods\n", dxp_method_count(dex));
+    printf("[+] %d classes\n", dxp_class_count(dex));
 
     dexfile_close(dex);
     return (0);

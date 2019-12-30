@@ -5,6 +5,7 @@
 # include <dexpert/version.h>
 # include "tmp_dexfile.h"
 # include "../utils/dxp_rbtree.h"
+# include "../utils/dxp_list.h"
 
 
 /*
@@ -32,6 +33,11 @@ struct s_application
 
     // the method list
     dxp_rbtree methods;
+
+    // the class list
+    // we do not use a RB tree because the list needs to have the super
+    // class and interfaces BEFORE the current class
+    dxp_list classes;
 };
 
 #endif/*!__DEXFILE_PRIVATE_H__*/
