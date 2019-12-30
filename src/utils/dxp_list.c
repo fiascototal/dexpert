@@ -258,3 +258,13 @@ void *dxp_list_data(dxp_list_iterator it)
 
     return (cur_it->current->data);
 }
+
+// destroy an iterator
+void dxp_list_destroy_iterator(dxp_list_iterator it)
+{
+    if (it)
+    {
+        free(it);
+        it = NULL;
+    }
+}

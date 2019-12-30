@@ -45,4 +45,7 @@ int dxp_list_next(dxp_list_iterator it);
 // return the element of the current position of the given iterator
 void *dxp_list_data(dxp_list_iterator it);
 
+// destroy an iterator
+void dxp_list_destroy_iterator(dxp_list_iterator it);
+
 #endif/*!__DXP_LIST_H__*/
