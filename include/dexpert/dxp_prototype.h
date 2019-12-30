@@ -2,6 +2,7 @@
 # define __DXP_PROTOTYPE_H__
 
 # include <stdint.h>
+# include <dexpert/dexfile.h>
 # include <dexpert/dxp_type.h>
 
 

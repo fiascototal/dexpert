@@ -1,6 +1,7 @@
 #ifndef __DXP_FIELD_H__
 # define __DXP_FIELD_H__
 
+# include <dexpert/dexfile.h>
 # include <dexpert/dxp_type.h>
 # include <dexpert/dxp_string.h>
 
