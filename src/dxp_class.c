@@ -29,7 +29,7 @@ dxp_class dxp_class_new(dxp_type cls_type)
     memset(result, 0, sizeof (struct s_dxp_class));
 
     result->cls_type = cls_type;
-    result->interfaces = dxp_list_new();
+    result->interfaces = dxp_list_new(LIST_NO_DEL);
 
     // default access flags is PUBLIC
     result->flags = ACC_PUBLIC;
@@ -64,7 +64,7 @@ dxp_type dxp_class_get_type(dxp_class c)
 uint32_t dxp_class_get_flags(dxp_class c)
 {
     struct s_dxp_class *cls = (struct s_dxp_class *)c;
-    CHECK_ARG(c, NULL);
+    CHECK_ARG(c, 0);
     return (cls->flags);
 }
 

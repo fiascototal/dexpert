@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "dxp_list.h"
+#include "../debug.h"
 #include <dexpert/error_codes.h>
 
 
@@ -12,6 +13,7 @@ struct s_list_item
 
 struct s_list
 {
+    f_list_del_item     del_fct;
     struct s_list_item *head;
     struct s_list_item *tail;
     uint32_t            size;
@@ -37,8 +39,11 @@ static void _delete_item(struct s_list_item *item)
     item = NULL;
 }
 
+void LIST_NO_DEL(void*a){ (void)a; }
+
+
 // create a new list object
-dxp_list dxp_list_new()
+dxp_list dxp_list_new(f_list_del_item del_fct)
 {
     struct s_list *result = NULL;
 
@@ -49,6 +54,7 @@ dxp_list dxp_list_new()
     result->head = NULL;
     result->tail = NULL;
     result->size = 0;
+    result->del_fct = del_fct;
 
     return ((dxp_list)result);
 }
@@ -60,16 +66,16 @@ int dxp_list_delete(dxp_list l)
     struct s_list_item *current = NULL,
                        *tmp     = NULL;
 
-    if (list == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(list);
 
     if (list->size > 0)
     {
         current = list->head;
-        while (current->next != NULL)
+        while (current != NULL)
         {
             tmp = current;
             current = current->next;
+            list->del_fct(tmp->data);
             _delete_item(tmp);
         }
     }
@@ -88,8 +94,7 @@ int dxp_list_push(dxp_list l, void *data)
     struct s_list      *list = (struct s_list *)l;
     struct s_list_item *item = NULL;
 
-    if (list == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(list);
 
     item = (struct s_list_item *)malloc(sizeof (struct s_list_item));
     if (item == NULL)
@@ -123,8 +128,7 @@ void *dxp_list_pop(dxp_list l)
     struct s_list_item *item   = NULL;
     void               *result = NULL;
 
-    if (list == NULL)
-        return (NULL);
+    CHECK_NULL_FATAL(list);
 
     if (list->size == 0 || list->tail == NULL)
         return (NULL);
@@ -153,6 +157,7 @@ void *dxp_list_pop(dxp_list l)
 uint32_t dxp_list_length(dxp_list l)
 {
     struct s_list *list = (struct s_list *)l;
+    CHECK_NULL_FATAL(list);
     return (list->size);
 }
 
@@ -163,12 +168,11 @@ void *dxp_list_get(dxp_list l, int index)
     struct s_list      *list     = (struct s_list *)l;
     struct s_list_item *cur_item = NULL;
 
-    if (list == NULL)
-        return (NULL);
+    CHECK_NULL_FATAL(list);
 
     if (index > 0)
     {
-        if (index > list->size)
+        if ((uint32_t)index > list->size)
             return (NULL);
 
         cur_item = list->head;
@@ -183,7 +187,7 @@ void *dxp_list_get(dxp_list l, int index)
     {
         index *= -1;
         index -= 1;
-        if (index > list->size)
+        if ((uint32_t)index > list->size)
             return (NULL);
 
         cur_item = list->tail;
@@ -207,6 +211,8 @@ dxp_list_iterator dxp_list_begin(dxp_list l)
     struct s_list          *list   = (struct s_list *)l;
     struct s_list_iterator *result = NULL;
 
+    CHECK_NULL_FATAL(list);
+
     result = (struct s_list_iterator *)malloc(sizeof (struct s_list_iterator));
     result->list = list;
     result->current = list->head;
@@ -218,6 +224,8 @@ dxp_list_iterator dxp_list_begin(dxp_list l)
 int dxp_list_end(dxp_list_iterator it)
 {
     struct s_list_iterator *cur_it = (struct s_list_iterator *)it;
+
+    CHECK_NULL_FATAL(cur_it);
 
     if (cur_it->current == NULL)
     {
@@ -235,10 +243,10 @@ int dxp_list_next(dxp_list_iterator it)
 {
     struct s_list_iterator *cur_it = (struct s_list_iterator *)it;
     
-    if (cur_it == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(cur_it);
+    
     if (cur_it->current == NULL)
-        return (ERR_BUGGY);
+        return (2);
     if (cur_it->current->next == NULL)
         return (ERR_ITEM_NOT_FOUND);
     cur_it->current = cur_it->current->next;
@@ -251,10 +259,10 @@ void *dxp_list_data(dxp_list_iterator it)
 {
     struct s_list_iterator *cur_it = (struct s_list_iterator *)it;
     
-    if (cur_it == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(cur_it);
+
     if (cur_it->current == NULL)
-        return (ERR_BUGGY);
+        return (NULL);
 
     return (cur_it->current->data);
 }

@@ -10,8 +10,10 @@ LIB_SRC_FILES=					\
 	dxp_prototype.c				\
 	dxp_field.c				    \
 	dxp_method.c			    \
+	dxp_class.c					\
 	utils/file_utils.c			\
 	utils/adler32.c				\
+	utils/dxp_list.c			\
 	utils/dxp_rbtree.c			\
 	utils/leb128.c				\
 	utils/crc32.c				\
@@ -22,7 +24,8 @@ LIB_SRC_FILES=					\
 	parsing/parse_types.c		\
 	parsing/parse_prototypes.c  \
 	parsing/parse_fields.c      \
-	parsing/parse_methods.c
+	parsing/parse_methods.c		\
+	parsing/parse_classes.c
 LIB_OBJ_FILES=$(LIB_SRC_FILES:.c=.o)
 
 ifdef DXP_DEBUG

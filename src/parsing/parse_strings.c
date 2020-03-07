@@ -6,7 +6,7 @@
 #include <dexpert/dxp_string.h>
 
 
-int parse_strings(struct s_application *app)
+int parse_strings(struct s_dex_cache *cache)
 {
     uint32_t   cur_off      = 0,
                string_off   = 0,
@@ -16,12 +16,12 @@ int parse_strings(struct s_application *app)
     dxp_string new_item,
                inserted_item;
 
-    CHECK_ARG(app, 1);
+    CHECK_ARG(cache, 1);
 
     // iterate of the dex to read all strings
-    data = app->tmp->data;
-    cur_off = app->tmp->hdr->stringIdsOff;
-    for (uint32_t i = 0; i < app->tmp->hdr->stringIdsSize; i++)
+    data = cache->data;
+    cur_off = cache->hdr->stringIdsOff;
+    for (uint32_t i = 0; i < cache->hdr->stringIdsSize; i++)
     {
         CHECK_OFFSET(cur_off, 2);
 
@@ -43,10 +43,10 @@ int parse_strings(struct s_application *app)
         new_item = dxp_str_new(data + string_off, string_size, utf16_size);
 
         // update the string list of our dexfile
-        inserted_item = dxp_str_add2(app, new_item);
+        inserted_item = dxp_str_add2(cache->app, new_item);
 
         // update the fast indexed list
-        app->tmp->strings[i] = inserted_item;
+        cache->strings[i] = inserted_item;
     }
 
     return (0);

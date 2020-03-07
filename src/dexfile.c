@@ -6,10 +6,13 @@
 #include <dexpert/dxp_string.h>
 #include <dexpert/dxp_type.h>
 #include <dexpert/dxp_prototype.h>
+#include <dexpert/dxp_field.h>
 #include <dexpert/dxp_method.h>
+#include <dexpert/dxp_class.h>
 #include "internal_structures/application.h"
-#include "parsing/parsers.h"
+#include "parsing/parse_dex.h"
 #include "utils/dxp_rbtree.h"
+#include "utils/dxp_list.h"
 #include "debug.h"
 
 
@@ -38,6 +41,9 @@ int dexfile_new(dexfile_t *dex)
 
     // allocate a new method list
     app->methods = dxp_rbtree_new(dxp_method_cmp, dxp_method_del);
+
+    // allocate a new class list
+    app->classes = dxp_list_new(dxp_class_del);
 
     *dex = (dexfile_t)app;
     return (0);
@@ -84,6 +90,13 @@ void dexfile_close(dexfile_t dex)
     {
         dxp_rbtree_delete(app->methods);
         app->methods = NULL;
+    }
+
+    // delete the list of classes
+    if (app->classes)
+    {
+        dxp_list_delete(app->classes);
+        app->classes = NULL;
     }
 
     free(app);

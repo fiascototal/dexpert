@@ -1,8 +1,9 @@
-#ifndef __TMP_DEXFILE_H__
-# define __TMP_DEXFILE_H__
+#ifndef __DEX_CACHE_H__
+# define __DEX_CACHE_H__
 
 # include <stdint.h>
 # include "../dex_objects/dex_header.h"
+# include "../internal_structures/application.h"
 # include <dexpert/dxp_string.h>
 # include <dexpert/dxp_type.h>
 # include <dexpert/dxp_prototype.h>
@@ -14,8 +15,12 @@
 /*
 ** A "temporary" structure useful when parsing a dex file
 */
-struct s_tmp_dexfile
+struct s_dex_cache
 {
+    // the pointer of the current application
+    // (we store it here to save an argument in all parsing fct ^^)
+    struct s_application *app;
+
     // the dex buffer
     uint8_t *data;
     uint32_t size;
@@ -78,4 +83,4 @@ struct s_tmp_dexfile
     // @}
 };
 
-#endif/*!__TMP_DEXFILE_H__*/
+#endif/*!__DEX_CACHE_H__*/

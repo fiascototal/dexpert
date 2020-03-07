@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "dxp_rbtree.h"
+#include "../debug.h"
 #include <dexpert/error_codes.h>
 
 
@@ -83,8 +84,7 @@ int dxp_rbtree_delete(dxp_rbtree t)
 {
     struct s_rbtree *tree = (struct s_rbtree *)t;
 
-    if (tree == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(tree);
 
     rec_delete_node(tree->root, tree->del_fct);
     tree->root = NULL;
@@ -279,8 +279,8 @@ int dxp_rbtree_insert(dxp_rbtree t, void *data)
     struct s_rbtree      *tree     = (struct s_rbtree *)t;
     struct s_rbtree_node *new_node = NULL;
 
-    if (tree == NULL || data == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(tree);
+    CHECK_NULL_FATAL(data);
 
     if (tree->root == NULL)
     {
@@ -338,6 +338,8 @@ void *dxp_rbtree_insert_unique(dxp_rbtree t, void *data)
     struct s_rbtree_node *new_node      = NULL,
                          *inserted_node = NULL;
 
+    CHECK_NULL_FATAL(tree);
+
     if (tree->root == NULL)
     {
         tree->root = _create_node(data);
@@ -375,6 +377,7 @@ static uint32_t rec_rbtree_size(struct s_rbtree_node *node)
 uint32_t dxp_rbtree_length(dxp_rbtree t)
 {
     struct s_rbtree *tree = (struct s_rbtree *)t;
+    CHECK_NULL_FATAL(tree);
     return (rec_rbtree_size(tree->root));
 }
 
@@ -416,6 +419,8 @@ dxp_rbtree_iterator dxp_rbtree_begin(dxp_rbtree t)
     struct s_rbtree *tree = (struct s_rbtree *)t;
     struct s_rbtree_iterator *result = NULL;
 
+    CHECK_NULL_FATAL(tree);
+
     result = (struct s_rbtree_iterator *)malloc(sizeof (struct s_rbtree_iterator));
     result->tree = (struct s_rbtree *)t;
     result->current = tree->root;
@@ -433,6 +438,9 @@ dxp_rbtree_iterator dxp_rbtree_begin(dxp_rbtree t)
 int dxp_rbtree_end(dxp_rbtree_iterator it)
 {
     struct s_rbtree_iterator *_it = (struct s_rbtree_iterator *)it;
+
+    CHECK_NULL_FATAL(_it);
+
     if (_it->current == NULL)
     {
         _it->tree = NULL;
@@ -447,8 +455,7 @@ int dxp_rbtree_next(dxp_rbtree_iterator it)
 {
     struct s_rbtree_iterator *_it = (struct s_rbtree_iterator *)it;
 
-    if (_it == NULL)
-        return (ERR_INVALID_ARG);
+    CHECK_NULL_FATAL(_it);
     if (_it->current == NULL)
         return (ERR_ITEM_NOT_FOUND);
 
@@ -475,8 +482,8 @@ int dxp_rbtree_next(dxp_rbtree_iterator it)
 void *dxp_rbtree_data(dxp_rbtree_iterator it)
 {
     struct s_rbtree_iterator *_it = (struct s_rbtree_iterator *)it;
-    if (_it == NULL || _it->current == NULL)
-        return (NULL);
+    CHECK_NULL_FATAL(_it);
+    CHECK_NULL_FATAL(_it->current);
     return (_it->current->data);
 }
 
@@ -502,6 +509,8 @@ static void _dxp_rbtree_print_rec(struct s_rbtree_node *cur_node, f_rbtree_print
 void dxp_rbtree_print(dxp_rbtree t, f_rbtree_print_node printer, const char *tree_name)
 {
     struct s_rbtree *tree = (struct s_rbtree *)t;
+
+    CHECK_NULL_FATAL(tree);
 
     printf("digraph %s {\n", tree_name);
     _dxp_rbtree_print_rec(tree->root, printer);

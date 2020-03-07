@@ -8,7 +8,7 @@
 
 
 // parse the fields table
-int parse_fields(struct s_application *app)
+int parse_fields(struct s_dex_cache *cache)
 {
     uint8_t       *data     = NULL;
     uint32_t       cur_off  = 0;
@@ -18,12 +18,12 @@ int parse_fields(struct s_application *app)
     dxp_field      new_item,
                    inserted_item;
 
-    CHECK_ARG(app, 1);
+    CHECK_ARG(cache, 1);
 
     // iterate of the dex to read all prototypes
-    data = app->tmp->data;
-    cur_off = app->tmp->hdr->fieldIdsOff;
-    for (uint32_t i = 0; i < app->tmp->hdr->fieldIdsSize; i++)
+    data = cache->data;
+    cur_off = cache->hdr->fieldIdsOff;
+    for (uint32_t i = 0; i < cache->hdr->fieldIdsSize; i++)
     {
         CHECK_OFFSET(cur_off, 2);
 
@@ -34,18 +34,18 @@ int parse_fields(struct s_application *app)
         CHECK_TYPE_IDX(cur_item->type_idx, 3);
         CHECK_STRING_IDX(cur_item->name_idx, 4);
 
-        cur_cls = app->tmp->types[cur_item->class_idx];
-        cur_typ = app->tmp->types[cur_item->type_idx];
-        cur_name = app->tmp->strings[cur_item->name_idx];
+        cur_cls = cache->types[cur_item->class_idx];
+        cur_typ = cache->types[cur_item->type_idx];
+        cur_name = cache->strings[cur_item->name_idx];
 
         // create a new field object
         new_item = dxp_field_new(cur_cls, cur_typ, cur_name);
 
         // update the field list of our dexfile
-        inserted_item = dxp_field_add2(app, new_item);
+        inserted_item = dxp_field_add2(cache->app, new_item);
 
         // update the fast indexed list
-        app->tmp->fields[i] = inserted_item;
+        cache->fields[i] = inserted_item;
     }
 
     return (0);

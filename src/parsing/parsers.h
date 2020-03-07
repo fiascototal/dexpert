@@ -1,35 +1,31 @@
 #ifndef __PARSERS_H__
 # define __PARSERS_H__
 
-# include <stdint.h>
-# include "../internal_structures/application.h"
+# include "dex_cache.h"
 
-
-// parse the given DEX data
-int parse_dex(struct s_application *app, uint8_t *data, uint64_t data_size);
 
 // parse the DEX header of the given data
-int parse_header(struct s_application *app);
+int parse_header(struct s_dex_cache *cache);
 
 // parse the map list
-int parse_map(struct s_application *app);
+int parse_map(struct s_dex_cache *cache);
 
 // parse the strings table
-int parse_strings(struct s_application *app);
+int parse_strings(struct s_dex_cache *cache);
 
 // parse the types table
-int parse_types(struct s_application *app);
+int parse_types(struct s_dex_cache *cache);
 
 // parse the prototypes table
-int parse_prototypes(struct s_application *app);
+int parse_prototypes(struct s_dex_cache *cache);
 
 // parse the fields table
-int parse_fields(struct s_application *app);
+int parse_fields(struct s_dex_cache *cache);
 
 // parse the methods table
-int parse_methods(struct s_application *app);
+int parse_methods(struct s_dex_cache *cache);
 
 // parse the classes table
-int parse_classes(struct s_application *app);
+int parse_classes(struct s_dex_cache *cache);
 
 #endif/*!__PARSERS_H__*/

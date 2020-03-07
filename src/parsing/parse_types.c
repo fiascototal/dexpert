@@ -6,7 +6,7 @@
 #include <dexpert/dxp_string.h>
 
 
-int parse_types(struct s_application *app)
+int parse_types(struct s_dex_cache *cache)
 {
     uint32_t   cur_off      = 0,
                string_index = 0;
@@ -14,12 +14,12 @@ int parse_types(struct s_application *app)
     dxp_type   new_item,
                inserted_item;
 
-    CHECK_ARG(app, 1);
+    CHECK_ARG(cache, 1);
 
     // iterate of the dex to read all types
-    data = app->tmp->data;
-    cur_off = app->tmp->hdr->typeIdsOff;
-    for (uint32_t i = 0; i < app->tmp->hdr->typeIdsSize; i++)
+    data = cache->data;
+    cur_off = cache->hdr->typeIdsOff;
+    for (uint32_t i = 0; i < cache->hdr->typeIdsSize; i++)
     {
         CHECK_OFFSET(cur_off, 2);
 
@@ -29,13 +29,13 @@ int parse_types(struct s_application *app)
         CHECK_STRING_IDX(string_index, 3);
 
         // create a new type object
-        new_item = dxp_type_new(app->tmp->strings[string_index]);
+        new_item = dxp_type_new(cache->strings[string_index]);
 
         // update the type list of our dexfile
-        inserted_item = dxp_type_add3(app, new_item);
+        inserted_item = dxp_type_add3(cache->app, new_item);
 
         // update the fast indexed list
-        app->tmp->types[i] = inserted_item;
+        cache->types[i] = inserted_item;
     }
 
     return (0);

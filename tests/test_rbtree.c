@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dexpert/dxp_rbtree.h>
+#include "../src/utils/dxp_rbtree.h"
 
 
 int int_cmp(void *a, void *b)
@@ -8,6 +8,12 @@ int int_cmp(void *a, void *b)
     int aa = *(int *)a;
     int bb = *(int *)b;
     return (aa - bb);
+}
+
+void int_del(void *data)
+{
+    free(data);
+    data = NULL;
 }
 
 void insert_int(int val, dxp_rbtree tree)
@@ -27,7 +33,7 @@ int main(void)
 {
     dxp_rbtree tree;
 
-    tree = dxp_rbtree_new(int_cmp);
+    tree = dxp_rbtree_new(int_cmp, int_del);
     insert_int(10, tree);
     insert_int(20, tree);
     insert_int(50, tree);

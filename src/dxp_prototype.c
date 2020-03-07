@@ -30,7 +30,7 @@ dxp_prototype dxp_proto_new(dxp_type return_type)
     result = (struct s_dxp_prototype *)malloc(sizeof (struct s_dxp_prototype));
     memset(result, 0, sizeof (struct s_dxp_prototype));
 
-    result->args = dxp_list_new();
+    result->args = dxp_list_new(LIST_NO_DEL);
     result->return_type = return_type;
 
     return ((dxp_prototype)result);
@@ -155,7 +155,6 @@ dxp_prototype dxp_proto_add(dexfile_t dex, const char *s)
     char    *pattern_found = NULL,
             *tmp           = NULL,
             *arg           = NULL;
-    uint32_t nb_arg        = 0;
 
     CHECK_ARG(app, NULL);
 

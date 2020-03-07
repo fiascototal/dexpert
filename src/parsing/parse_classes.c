@@ -8,7 +8,7 @@
 
 
 // parse the classes table
-int parse_classes(struct s_application *app)
+int parse_classes(struct s_dex_cache *cache)
 {
     uint8_t        *data          = NULL;
     uint32_t        cur_off       = 0,
@@ -21,12 +21,12 @@ int parse_classes(struct s_application *app)
     dxp_class       new_item,
                     inserted_item;
 
-    CHECK_ARG(app, 1);
+    CHECK_ARG(cache, 1);
 
     // iterate of the dex to read all prototypes
-    data = app->tmp->data;
-    cur_off = app->tmp->hdr->classDefsOff;
-    for (uint32_t i = 0; i < app->tmp->hdr->classDefsSize; i++)
+    data = cache->data;
+    cur_off = cache->hdr->classDefsOff;
+    for (uint32_t i = 0; i < cache->hdr->classDefsSize; i++)
     {
         CHECK_OFFSET(cur_off, 2);
 
@@ -41,22 +41,25 @@ int parse_classes(struct s_application *app)
         if (cur_item->source_file_idx != 0xFFFFFFFF)
             CHECK_STRING_IDX(cur_item->source_file_idx, 4);
             
-        cur_type = app->tmp->types[cur_item->class_idx];
+        cur_type = cache->types[cur_item->class_idx];
 
         // create a new class object
         new_item = dxp_class_new(cur_type);
 
+        // set flags
+        dxp_class_set_flags(new_item, cur_item->access_flags);
+
         // set the super class
         if (cur_item->superclass_idx != 0xFFFFFFFF)
         {
-            cur_type = app->tmp->types[cur_item->class_idx];
+            cur_type = cache->types[cur_item->class_idx];
             dxp_class_set_super_type(new_item, cur_type);
         }
 
         // set the source filename
         if (cur_item->source_file_idx != 0xFFFFFFFF)
         {
-            cur_name = app->tmp->strings[cur_item->source_file_idx];
+            cur_name = cache->strings[cur_item->source_file_idx];
             dxp_class_set_source(new_item, cur_name);
         }
 
@@ -64,23 +67,23 @@ int parse_classes(struct s_application *app)
         if (cur_item->interfaces_off != 0)
         {
             interface_off = cur_item->interfaces_off;
-            CHECK_OFFSET(interface_off, NULL);
+            CHECK_OFFSET(interface_off, 5);
             nb_interfaces = *(uint32_t *)(data + interface_off);
             for (uint32_t j = 0; j < nb_interfaces; j++)
             {
                 interface_off += sizeof (uint32_t);
                 cur_type_idx = *(uint32_t*)(data + interface_off);
-                CHECK_TYPE_IDX(cur_type_idx, NULL);
-                cur_type = app->tmp->types[cur_type_idx];
+                CHECK_TYPE_IDX(cur_type_idx, 6);
+                cur_type = cache->types[cur_type_idx];
                 dxp_class_add_interface(new_item, cur_type);
             }
         }
 
         // update the class list of our dexfile
-        inserted_item = dxp_class_add(app, new_item);
+        inserted_item = dxp_class_add(cache->app, new_item);
 
         // update the fast indexed list
-        app->tmp->classes[i] = inserted_item;
+        cache->classes[i] = inserted_item;
     }
 
     return (0);

@@ -10,8 +10,13 @@ typedef void *dxp_list_iterator;
 // General stuff
 //
 
+// the primitive to delete a node
+// can be NULL
+typedef void (*f_list_del_item)(void *);
+void LIST_NO_DEL(void*);
+
 // create a new list object
-dxp_list dxp_list_new();
+dxp_list dxp_list_new(f_list_del_item del_fct);
 
 // destroy the whole list
 int dxp_list_delete(dxp_list l);

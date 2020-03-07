@@ -9,7 +9,7 @@
 
 
 // parse the methods table
-int parse_methods(struct s_application *app)
+int parse_methods(struct s_dex_cache *cache)
 {
     uint8_t        *data     = NULL;
     uint32_t        cur_off  = 0;
@@ -20,12 +20,12 @@ int parse_methods(struct s_application *app)
     dxp_method      new_item,
                     inserted_item;
 
-    CHECK_ARG(app, 1);
+    CHECK_ARG(cache, 1);
 
     // iterate of the dex to read all prototypes
-    data = app->tmp->data;
-    cur_off = app->tmp->hdr->methodIdsOff;
-    for (uint32_t i = 0; i < app->tmp->hdr->methodIdsSize; i++)
+    data = cache->data;
+    cur_off = cache->hdr->methodIdsOff;
+    for (uint32_t i = 0; i < cache->hdr->methodIdsSize; i++)
     {
         CHECK_OFFSET(cur_off, 2);
 
@@ -36,18 +36,18 @@ int parse_methods(struct s_application *app)
         CHECK_STRING_IDX(cur_item->name_idx, 4);
         CHECK_PROTOTYPE_IDX(cur_item->proto_idx, 5);
 
-        cur_cls = app->tmp->types[cur_item->class_idx];
-        cur_name = app->tmp->strings[cur_item->name_idx];
-        cur_proto = app->tmp->prototypes[cur_item->proto_idx];
+        cur_cls = cache->types[cur_item->class_idx];
+        cur_name = cache->strings[cur_item->name_idx];
+        cur_proto = cache->prototypes[cur_item->proto_idx];
 
         // create a new method object
         new_item = dxp_method_new(cur_cls, cur_proto, cur_name);
 
         // update the method list of our dexfile
-        inserted_item = dxp_method_add3(app, new_item);
+        inserted_item = dxp_method_add3(cache->app, new_item);
 
         // update the fast indexed list
-        app->tmp->methods[i] = inserted_item;
+        cache->methods[i] = inserted_item;
     }
 
     return (0);

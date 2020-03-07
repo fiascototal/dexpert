@@ -13,7 +13,7 @@ endif
 all: read_dex
 
 read_dex: read_dex.c $(LIB_NAME)
-	$(CROSS)$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
+	$(CROSS)$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $^
 
 $(LIB_NAME):
 	make -C $(dir $(LIB_NAME)) $(shell basename $(LIB_NAME))
