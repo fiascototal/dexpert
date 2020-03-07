@@ -38,4 +38,4 @@ enum {
                 | ACC_DECLARED_SYNCHRONIZED),
 };
 
-#endif __ACCESS_FLAGS__#endif /*!*/
+#endif/*!__ACCESS_FLAGS__*/
